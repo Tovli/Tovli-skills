@@ -1,0 +1,61 @@
+{
+  "meta": {
+    "title": "Branch change explanation",
+    "branch": "feature/example",
+    "base": "abc1234",
+    "head": "def5678",
+    "commit_range": "abc1234..def5678",
+    "ste_status": "Writing rules applied. Controlled vocabulary not formally verified."
+  },
+  "summary": {
+    "purpose": "The branch changes invoice lookup behavior for missing invoices.",
+    "risk_level": "medium",
+    "deployment_action": "Deploy the API after the database migration.",
+    "confidence": "corroborated"
+  },
+  "scenes": [
+    {
+      "id": "summary",
+      "eyebrow": "Change summary",
+      "title": "Missing invoices now return an empty result",
+      "narrative": [
+        "The branch changes the result for an invoice that does not exist.",
+        "The API previously returned HTTP 404.",
+        "The API now returns HTTP 200 with an empty result."
+      ],
+      "visual": {
+        "type": "before-after",
+        "before_title": "BEFORE",
+        "before": ["Unknown invoice", "HTTP 404", "Client handles an error"],
+        "after_title": "AFTER",
+        "after": ["Unknown invoice", "HTTP 200", "Client receives an empty result"]
+      },
+      "evidence": [
+        {"label": "direct", "detail": "src/Invoices/GetInvoice.cs and tests/Invoices/GetInvoiceTests.cs"}
+      ]
+    },
+    {
+      "id": "deployment",
+      "eyebrow": "Production deployment",
+      "title": "The API requires the new database column",
+      "narrative": [
+        "The new code reads the InvoiceState column during each lookup.",
+        "Old application instances ignore the new column.",
+        "Deploy the additive migration before the API."
+      ],
+      "visual": {
+        "type": "deployment",
+        "risk": "medium",
+        "requires": ["Apply migration 20261006_AddInvoiceState", "Deploy API instances"],
+        "rollback": "Application rollback is safe because the migration is additive.",
+        "verify": ["Check API error rate", "Check invoice lookup latency", "Check database migration state"]
+      },
+      "evidence": [
+        {"label": "corroborated", "detail": "migration file, ORM model, and integration test"}
+      ]
+    }
+  ],
+  "unknowns": [
+    "The repository does not show the production feature flag value."
+  ]
+}
