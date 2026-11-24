@@ -1,0 +1,15 @@
+{
+  "name": "tovli-writer",
+  "owner": {
+    "name": "Tovli"
+  },
+  "metadata": {
+    "description": "Draft, review, and polish LinkedIn posts while preserving the author's voice."
+  },
+  "plugins": [
+    {
+      "name": "tovli-writer",
+      "source": "./plugins/tovli-writer"
+    }
+  ]
+}

@@ -1,0 +1,10 @@
+{
+  "name": "tovli-writer",
+  "version": "0.1.0",
+  "description": "Draft, review, and polish LinkedIn posts while preserving the author's voice.",
+  "author": {
+    "name": "Tovli"
+  },
+  "repository": "https://github.com/Tovli/Tovli-skills",
+  "license": "MIT"
+}

@@ -1,0 +1,9 @@
+{
+  "repository": "https://github.com/Tovli/Tovli-skills",
+  "revision": "d3bf3d7b502fbd2478630d5801d384fae400a84a",
+  "version": "0.1.0",
+  "marketplace": "tovli-writer",
+  "skills": [
+    "tovli-post-writer"
+  ]
+}
