@@ -17,7 +17,7 @@ Thank you for helping improve Tovli Skills. Contributions can add a skill, impro
 2. Explain the user need, affected skill directory, and expected behavior.
 3. Update instructions and examples when behavior or requirements change.
 4. Review examples and generated output for private data, credentials, and unsupported claims.
-5. Follow any validation steps documented by the affected skill. This repository does not currently define a repository-wide automated check suite.
+5. Follow the validation steps documented by the affected skill. For installer and marketplace changes, run `python -B -m unittest discover -s tests -v`. See [marketplace release checks](INSTALL.md#prepare-a-marketplace-release) before changing distribution.
 
 ## Pull requests
 

@@ -2,7 +2,7 @@
 
 Tovli Skills is a public collection of skills for AI agents. Each skill lives in its own directory and contains its instructions in a `SKILL.md` file, with optional scripts, references, and examples.
 
-Skills target agents that support the `SKILL.md` format. Check your agent's documentation for its skill installation and compatibility rules.
+Install skills in Codex CLI or Claude Code through a native marketplace or by asking your agent to install from this repository.
 
 ## Skills
 
@@ -15,13 +15,21 @@ Skills target agents that support the `SKILL.md` format. Check your agent's docu
 
 This catalog grows as new skills are added. Each skill's directory may include its own README with specific usage instructions.
 
-## Use a skill
+## Install from a marketplace
 
-1. Choose a skill directory and read its `SKILL.md` and any included README.
-2. Install or copy that skill directory using the method supported by your agent.
-3. Invoke the skill by its name or follow your agent's instructions for selecting skills.
+| Marketplace | Skills |
+| --- | --- |
+| `tovli-planning` | `tovli-plan`, `tovli-agentic-planner` |
+| `tovli-explainer` | `tovli-explain` |
+| `tovli-writer` | `tovli-post-writer` |
 
-There is no repository-wide installer. Skills may have different requirements; see their documentation before use.
+See the [marketplace commands](INSTALL.md#native-marketplaces) for both clients and how to update or remove a plugin. Each command uses its own published Git branch.
+
+## Ask your agent to install
+
+> Install Tovli Skills from https://github.com/Tovli/Tovli-skills for this project. Follow INSTALL.md and tell me how to invoke the installed skills.
+
+To install a single skill, name it in the request. If you leave out the scope, the agent asks whether to install for the project or for your user account. [Read the installer guide](INSTALL.md#standalone-installer) to run it from your terminal.
 
 ## Contribute
 
