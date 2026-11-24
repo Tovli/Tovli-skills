@@ -1,0 +1,39 @@
+name: Skill bug report
+description: Report a reproducible problem with a skill or its supporting files
+body:
+  - type: input
+    id: skill
+    attributes:
+      label: Skill directory
+      description: Which skill is affected?
+      placeholder: git-branch-change-explainer
+    validations:
+      required: true
+  - type: input
+    id: agent
+    attributes:
+      label: Agent and version
+      description: Include the agent and version where you observed the issue.
+    validations:
+      required: true
+  - type: textarea
+    id: problem
+    attributes:
+      label: What happened?
+      description: Describe the result and what you expected instead.
+    validations:
+      required: true
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: Steps to reproduce
+      description: Include a minimal example. Remove secrets and private data.
+    validations:
+      required: true
+  - type: textarea
+    id: context
+    attributes:
+      label: Additional context
+      description: Add relevant logs or screenshots after removing sensitive information.
+    validations:
+      required: false

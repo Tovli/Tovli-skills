@@ -18,7 +18,10 @@ Use this checklist to prevent a diff-only explanation.
 - [ ] Calculate the merge base.
 - [ ] Record commits in the range.
 - [ ] Record renamed, added, modified, and deleted files.
-- [ ] Record uncommitted work separately.
+- [ ] Include staged and unstaged tracked changes in the effective AFTER state.
+- [ ] Include untracked non-ignored files in the effective AFTER state.
+- [ ] Record ignored files separately when they could affect interpretation.
+- [ ] Identify committed, staged, unstaged, and untracked evidence.
 
 ## Behavior
 
@@ -26,7 +29,7 @@ Use this checklist to prevent a diff-only explanation.
 - [ ] Trace important callers.
 - [ ] Trace important consumers.
 - [ ] Read the previous implementation.
-- [ ] Read the new implementation.
+- [ ] Read the current filesystem implementation, including uncommitted files.
 - [ ] Compare validation behavior.
 - [ ] Compare error behavior.
 - [ ] Compare state changes.
@@ -41,6 +44,23 @@ Use this checklist to prevent a diff-only explanation.
 - [ ] Serialized models.
 - [ ] Configuration contracts.
 - [ ] Authentication and authorization.
+
+## Presentation
+
+- [ ] State explicitly when the selected comparison has no changes, after checking committed and included local changes.
+- [ ] Record overall, business, and technical change status; distinguish unchanged from unknown impact.
+- [ ] Show an explicit no-change statement for each unchanged view without fabricating change scenes.
+- [ ] Classify business outcomes separately from technical contracts and components.
+- [ ] Present business and technical content in mutually exclusive views.
+- [ ] Describe business rules and outcomes in domain language.
+- [ ] Draw activity diagrams for changed flows, decisions, and outcomes.
+- [ ] Show matched BEFORE and AFTER diagrams for each changed flow and component relationship.
+- [ ] Explain the previous outcome and current outcome under the same conditions for every material change.
+- [ ] Label absent capabilities and unknown baselines explicitly instead of inventing previous behavior.
+- [ ] Compare contract definitions and compatibility before and after the change.
+- [ ] Diagram changed component responsibilities, dependencies, and boundaries.
+- [ ] Keep source paths and implementation evidence in the technical view.
+- [ ] Give each unknown a business or technical category.
 
 ## Deployment
 

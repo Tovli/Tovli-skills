@@ -1,0 +1,31 @@
+name: Skill idea
+description: Suggest a new skill or an improvement to an existing one
+body:
+  - type: input
+    id: skill
+    attributes:
+      label: Skill directory
+      description: Name the affected skill, or write "new skill".
+    validations:
+      required: true
+  - type: textarea
+    id: need
+    attributes:
+      label: User need
+      description: What task or problem should the skill address?
+    validations:
+      required: true
+  - type: textarea
+    id: outcome
+    attributes:
+      label: Desired outcome
+      description: What should an agent do, and what should the result look like?
+    validations:
+      required: true
+  - type: textarea
+    id: context
+    attributes:
+      label: Additional context
+      description: Include examples or constraints that would help evaluate the idea.
+    validations:
+      required: false

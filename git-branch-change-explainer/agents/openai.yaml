@@ -1,0 +1,4 @@
+interface:
+  display_name: "Tovli Explain"
+  short_description: "Cinematic branch reports with parallax and evidence"
+  default_prompt: "Use $tovli-explain to explain this branch's behavior and production impact compared with its base. Create a cinematic standalone HTML report with restrained decorative parallax, accessible reduced-motion behavior, and separate Business and Technical views."
