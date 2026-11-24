@@ -3,32 +3,30 @@
   "metadata": {
     "id": "PLAN-001",
     "title": "Install Tovli Skills in Codex and Claude",
-    "version": "v4",
-    "stage": "Implemented locally",
+    "version": "v5",
+    "stage": "Published",
     "domain": "Open-source skill distribution",
     "as_of": "2026-11-24",
     "owner": "",
     "participants": [],
     "immediate_ask": {
-      "status": "open",
-      "description": "Review the source snapshot and approve publishing the installer commit and the three marketplace branches.",
+      "status": "none",
+      "description": "",
       "owner": "",
       "due_date": null,
-      "linked_ids": [
-        "S-006"
-      ]
+      "linked_ids": []
     }
   },
   "overview": {
     "objective": "Users can install any of the four published Tovli skills in Codex or Claude through a native plugin marketplace or by asking the agent to install from the GitHub repository.",
     "user_need": "People should be able to browse an installable plugin or paste the repository link into their coding agent and get working skills in the intended scope.",
-    "today": "The installer and marketplace builder are in the working tree. Local release 0.1.0 contains the three Git marketplace branches. Both CLIs passed native discovery and package checks from a disposable Git fixture. Publication and public-URL verification remain pending.",
+    "today": "The installer source is public at tag v0.1.0 (d3bf3d7). GitHub hosts the three separate marketplace branches. Both CLI marketplace routes and the standalone installer passed fresh installs from GitHub.",
     "plain_language_solution": "Distribute four skills through three named marketplaces and a small installer either agent can run from a checkout. Both routes use the same skill sources and launch on Codex CLI and Claude Code. List desktop routes after verification.",
     "why_now": "Installation currently depends on users finding the correct destination and copying complete skill folders themselves."
   },
   "plan_now": {
     "as_of": "2026-11-24",
-    "current_agreed_plan": "The three separately addable marketplaces and the small cross-platform installer are implemented. Codex CLI and Claude Code each registered the three branches from one Git source, discovered all assigned skills, and ran the packaged HTML renderers. The installer requires project or user scope and protects existing edits. The local 0.1.0 build uses the committed skill sources at 2f29897. The remaining release step is to publish and verify the GitHub source and marketplace branches.",
+    "current_agreed_plan": "The three marketplaces and checkout installer are live on GitHub. Codex CLI 0.171.0 and Claude Code 2.1.322 installed all three public packages and reported the expected four skills. The installer installed all four from a fresh v0.1.0 checkout for both clients. The authenticated chat-driven prompt and desktop install routes remain unverified.",
     "visual_examples": [
       {
         "id": "V-001",
@@ -157,7 +155,7 @@
         "id": "A-001",
         "statement": "The public release should distribute the four catalog entries from the top-level source directories.",
         "status": "validated",
-        "evidence": "The builder uses the four original top-level skill directories in the committed Git snapshot. The workspace-local planning copy and working tree edits were excluded from the preview."
+        "evidence": "Release v0.1.0 packages the four canonical skill directories at d3bf3d7. The workspace-local planning copy and unpublished working-tree edits were excluded."
       },
       {
         "id": "A-002",
@@ -169,7 +167,7 @@
         "id": "A-003",
         "statement": "Distinct Git refs in the same repo can host the three marketplace identities.",
         "status": "validated",
-        "evidence": "Codex CLI 0.171.0 and Claude Code 2.1.322 registered, installed, and refreshed all three branch-backed marketplaces from one disposable Git repo. Public GitHub verification is still planned."
+        "evidence": "Both CLI versions registered and installed all three branch-backed marketplaces from the public GitHub repository. Disposable profiles also verified refresh and independent removal."
       }
     ],
     "supporting_links": [
@@ -573,9 +571,14 @@
           "D-003"
         ],
         "target_date": null,
-        "status": "in_progress",
+        "status": "done",
         "done_when": "The release check detects catalog and package drift. The public README identifies the three Git sources and matching installer revision. Fresh installs from the public distribution succeed on both CLI clients and the prior known-good release remains available.",
-        "evidence_links": []
+        "evidence_links": [
+          {
+            "title": "Published v0.1.0 source tag",
+            "url": "https://github.com/Tovli/Tovli-skills/tree/v0.1.0"
+          }
+        ]
       }
     ],
     "how_we_test_it": {
@@ -587,7 +590,7 @@
         "Verified Windows and POSIX path handling, missing noninteractive scope, retry and local edit protection. Codex discovered standalone skills at both scopes. Claude validated both standalone skill directories offline.",
         "Remove the temporary checkout. Initialize a plan and render a branch report from the installed scripts. Discover and invoke the two Markdown-only skills.",
         "Retry the same release, exercise an interrupted copy and a divergent existing skill, switch revisions and uninstall while preserving unrelated files.",
-        "After publishing, install both routes from the public GitHub URL and test the repo-link prompt with a fresh client session."
+        "Fresh installs from the public GitHub sources passed on both CLIs. A fresh checkout at v0.1.0 installed all four skills for both clients. Authenticated chat-driven install behavior remains unverified."
       ],
       "acceptance_criteria": [
         "All three marketplaces and the standalone route pass on Codex CLI and Claude Code. Each advertised desktop route has its own evidence.",
@@ -814,6 +817,19 @@
           "S-005",
           "S-006"
         ]
+      },
+      {
+        "id": "H-006",
+        "date": "2026-11-24",
+        "actor": "Release session",
+        "event_type": "implementation",
+        "summary": "Published the source, v0.1.0 tag, and all three marketplace branches to GitHub in one atomic push. Verified fresh public installs in both CLI clients and ran the seven distribution tests from the public tagged checkout.",
+        "affected_ids": [
+          "A-001",
+          "A-003",
+          "S-005",
+          "S-006"
+        ]
       }
     ],
     "versions": [
@@ -840,6 +856,12 @@
         "date": "2026-11-24",
         "stage": "Implemented locally",
         "change_summary": "Recorded the implemented installer and builder, local validation, and the remaining public release checks."
+      },
+      {
+        "version": "v5",
+        "date": "2026-11-24",
+        "stage": "Published",
+        "change_summary": "Recorded GitHub publication and verified public CLI installations."
       }
     ]
   },

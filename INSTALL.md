@@ -4,7 +4,7 @@ Codex CLI and Claude Code support both a native marketplace route and a standalo
 
 ## Native marketplaces
 
-Use these commands once the corresponding `marketplace/<name>` branch is published. Each marketplace has one plugin with the same name. The commands below install Planning. Substitute `tovli-explainer` or `tovli-writer` for every occurrence of `tovli-planning` to choose another group.
+Each marketplace has one plugin with the same name. The commands below install Planning. Substitute `tovli-explainer` or `tovli-writer` for every occurrence of `tovli-planning` to choose another group.
 
 | Marketplace name | Skills | Claude Code plugin commands |
 | --- | --- | --- |
