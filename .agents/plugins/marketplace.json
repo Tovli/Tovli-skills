@@ -1,0 +1,20 @@
+{
+  "name": "tovli-explainer",
+  "interface": {
+    "displayName": "Tovli Explainer"
+  },
+  "plugins": [
+    {
+      "name": "tovli-explainer",
+      "source": {
+        "source": "local",
+        "path": "./plugins/tovli-explainer"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Productivity"
+    }
+  ]
+}

@@ -1,0 +1,18 @@
+{
+  "name": "tovli-explainer",
+  "version": "0.1.0",
+  "description": "Explain Git branch changes and create a standalone HTML report.",
+  "author": {
+    "name": "Tovli"
+  },
+  "repository": "https://github.com/Tovli/Tovli-skills",
+  "license": "MIT",
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "Tovli Explainer",
+    "shortDescription": "Git branch explainers",
+    "longDescription": "Explain Git branch changes and create a standalone HTML report.",
+    "developerName": "Tovli",
+    "category": "Productivity"
+  }
+}

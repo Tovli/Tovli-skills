@@ -1,0 +1,276 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Invoice lookup changes</title><style>
+:root{--bg:#080e10;--panel:#101b1e;--text:#f2f0e7;--muted:#a6b8b7;--line:#2a3c3e;--accent:#b8f87a;--cyan:#74d9d0;--read-progress:0;color-scheme:dark}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html{scroll-padding-top:100px}
+body{margin:0;background:var(--bg);color:var(--text);font-family:"Segoe UI",Arial,Helvetica,sans-serif;line-height:1.65}
+body::before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;background:radial-gradient(ellipse at 85% 5%,#18353355,transparent 55%)}
+::selection{background:var(--accent);color:var(--bg)}
+a{color:inherit}
+.skip-link{position:absolute;top:10px;left:16px;z-index:10;padding:10px 16px;background:var(--accent);color:var(--bg);transform:translateY(-150%)}
+.skip-link:focus{transform:none}
+.hero,.view-intro,.sources,.unknowns,footer{max-width:1440px;margin:auto;padding:40px 56px}
+.hero{position:relative;isolation:isolate;overflow:hidden;min-height:790px;min-height:min(900px,94svh);display:flex;flex-direction:column;justify-content:space-between;padding-top:34px;padding-bottom:30px}
+.masthead{display:flex;align-items:center;justify-content:space-between;gap:24px;z-index:1}
+.wordmark{display:flex;align-items:center;gap:12px;font-size:16px;font-weight:750;letter-spacing:-.04em}
+.brand-mark{display:grid;place-items:center;width:28px;height:28px;background:var(--accent);color:var(--bg);font-size:22px;font-weight:900;line-height:1;border-radius:7px}
+.edition,.hero-bottom,.eyebrow,.scene-number,.tab-number,.visual-label{font-family:Consolas,"Courier New",monospace;font-size:11px;letter-spacing:.12em;text-transform:uppercase}
+.edition{color:var(--muted)}
+.hero-copy{position:relative;z-index:1;width:66%;padding:90px 0 76px}
+.hero .eyebrow{display:flex;align-items:center;gap:12px;color:var(--accent)}
+.hero .eyebrow::before{content:"";height:1px;width:36px;background:currentColor}
+h1{font-size:clamp(56px,7.8vw,112px);font-weight:600;letter-spacing:-.07em;line-height:.99;max-width:13ch;margin:24px 0 30px;overflow-wrap:anywhere;text-wrap:balance}
+.hero-rule{height:5px;width:74px;background:var(--accent);box-shadow:0 0 32px #b8f84230}
+.hero-bottom{position:relative;z-index:1;display:flex;align-items:center;justify-content:space-between;gap:24px;color:var(--muted)}
+.hero-bottom a{display:flex;align-items:center;gap:28px;text-decoration:none;color:var(--text);padding:12px 0}
+.scroll-arrow{font-size:22px;color:var(--accent)}
+.hero-art{position:absolute;z-index:0;pointer-events:none;top:100px;right:-25px;bottom:50px;width:53%;overflow:hidden;contain:paint}
+.parallax-layer{position:absolute;inset:0}
+.art-grid{position:absolute;inset:12% -50% -45% -30%;background-image:linear-gradient(#5b9e9030 1px,transparent 1px),linear-gradient(90deg,#5b9e9030 1px,transparent 1px);background-size:52px 52px;transform:perspective(550px) rotateX(58deg) rotateZ(-24deg);mask-image:radial-gradient(ellipse,#0008,transparent 68%)}
+.art-halo{position:absolute;width:460px;height:460px;top:12%;left:10%;border-radius:50%;background:radial-gradient(circle,#5cdcb522,transparent 65%)}
+.art-orbit{position:absolute;width:420px;height:420px;top:18%;left:15%;border:1px solid #b8f87a65;border-radius:50%;transform:rotate(-32deg) scaleX(.59);box-shadow:inset 0 0 45px #b8f87a06,0 0 45px #b8f87a06}
+.art-orbit::after{content:"";position:absolute;inset:35px;border:1px solid #74d9d035;border-radius:50%}
+.art-orbit.second{transform:rotate(38deg) scaleX(.59);border-color:#74d9d055}
+.art-orbit.third{transform:rotate(90deg) scaleX(.59);border-color:#b8f87a30}
+.art-core{position:absolute;top:calc(18% + 146px);left:calc(15% + 146px);height:128px;width:128px;border:1px solid #c5ffb2aa;border-radius:28px;transform:rotate(-20deg);background:linear-gradient(145deg,#c3ff9f30,#11363990 55%,#080e10);box-shadow:0 0 80px #74d9d025,inset 0 0 28px #b8f87a15;display:grid;place-items:center}
+.art-core span{font-size:64px;font-weight:300;line-height:1;color:var(--accent);transform:rotate(20deg)}
+.art-satellite{position:absolute;left:24%;top:25%;width:11px;height:11px;background:var(--accent);border-radius:50%;box-shadow:0 0 25px #b8f87a80}
+.art-satellite.second{left:77%;top:65%;background:var(--cyan);width:7px;height:7px}
+.art-coordinate{position:absolute;top:76%;left:28%;color:#a6b8b7aa;font:10px Consolas,monospace;letter-spacing:.2em}
+.change-notice{padding:16px 18px;margin-top:28px;border-left:3px solid var(--accent);background:#14241be6;font-size:17px;font-weight:600;max-width:600px}
+.eyebrow{color:var(--accent);font-weight:700}
+h2{font-size:clamp(30px,3.4vw,48px);font-weight:550;letter-spacing:-.045em;line-height:1.12;text-wrap:balance}
+h3{font-size:14px;margin:0 0 12px}
+p{max-width:720px}
+.tabs{position:sticky;top:0;z-index:5;background:#080e10f5;border-block:1px solid var(--line)}
+.tabs-shell{max-width:1440px;padding:0 56px;margin:auto;display:flex;align-items:center;gap:32px}
+.tabs button{position:relative;display:flex;align-items:center;gap:12px;min-height:80px;padding:18px 0;border:0;font:inherit;font-size:14px;font-weight:600;color:var(--muted);background:transparent;cursor:pointer}
+.tabs button::after{content:"";position:absolute;bottom:0;left:0;right:0;height:2px;background:transparent}
+.tabs button[aria-selected=true]{color:var(--text)}
+.tabs button[aria-selected=true]::after{background:var(--accent)}
+.tab-number{font-size:10px;color:var(--muted)}
+.tabs button[aria-selected=true] .tab-number{color:var(--accent)}
+.reading-progress{position:absolute;top:-1px;left:0;width:100%;height:2px;background:var(--accent);transform:scaleX(var(--read-progress));transform-origin:left;pointer-events:none}
+:focus-visible{outline:2px solid var(--accent);outline-offset:6px;border-radius:2px}
+.view-intro{padding-top:72px;padding-bottom:52px}
+.view-intro h2{margin:12px 0 18px}
+.view-intro>p{font-size:18px;color:var(--muted);max-width:760px}
+.meta,.confidence{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.meta{margin-top:26px}
+.pill{border:1px solid var(--line);border-radius:4px;padding:5px 9px;font:11px/1.5 Consolas,monospace;color:var(--muted);overflow-wrap:anywhere;max-width:100%}
+.story{max-width:1440px;margin:auto;padding:0 56px;display:grid;grid-template-columns:minmax(0,.88fr) minmax(0,1.12fr);gap:72px}
+.story article{min-width:0}
+.step{min-height:88vh;display:flex;flex-direction:column;justify-content:center;padding:72px 0;scroll-margin-top:100px;min-width:0}
+.scene-heading{display:flex;align-items:center;gap:18px;margin-bottom:12px}
+.scene-number{color:var(--muted);border:1px solid var(--line);border-radius:50%;width:34px;height:34px;display:grid;place-items:center;flex-shrink:0;letter-spacing:0}
+.step.active .scene-number{background:var(--accent);border-color:var(--accent);color:var(--bg)}
+.step h2{margin:16px 0 26px}
+.step p{font-size:17px;color:var(--muted);margin:0 0 16px;line-height:1.8}
+.step.active h2{color:var(--text)}
+.confidence{margin-top:24px;padding-top:20px;border-top:1px solid var(--line);font:11px Consolas,monospace;color:var(--muted)}
+.visual-wrap{position:relative;min-width:0}
+.visual-card{position:sticky;top:112px;max-height:calc(100vh - 144px);overflow:auto;overscroll-behavior:contain;margin:40px 0;padding:30px;background:linear-gradient(145deg,#162528,#0d171a 80%);border:1px solid #3a5350;border-radius:18px;box-shadow:0 24px 70px #0005,inset 0 1px #ffffff08;scrollbar-color:#48625a transparent;scrollbar-width:thin}
+.visual-label{color:var(--accent);margin-bottom:16px;display:flex;align-items:center;gap:8px;font-size:10px}
+.visual-label::before{content:"";width:5px;height:5px;background:currentColor;border-radius:50%}
+.visual-title{font-size:24px;line-height:1.25;letter-spacing:-.03em;margin-bottom:26px}
+.mobile-visual{display:none}
+.box{border:1px solid var(--line);background:#080e1040;padding:20px;border-radius:10px;margin:12px 0;overflow-wrap:anywhere}
+.box h3{font:11px Consolas,monospace;letter-spacing:.1em;color:var(--muted)}
+.comparison .box:last-child{border-color:#587147;background:#b8f87a06}
+.comparison .box:last-child h3{color:var(--accent)}
+.box p{margin:0}
+.comparison{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:12px}
+ul{padding-left:20px}
+li{margin:8px 0}
+li::marker{color:var(--accent)}
+.diagram-pair{display:grid;gap:28px}
+.diagram-state{min-width:0;border-top:1px solid var(--line);padding-top:18px}
+.state-label{display:inline-block;color:var(--muted);font:11px Consolas,monospace;letter-spacing:.12em;border:1px solid var(--line);padding:5px 10px;border-radius:4px}
+.diagram-state:last-child .state-label{color:var(--accent);border-color:#587147}
+figure{margin:0 0 18px}
+figcaption{color:var(--muted);font-size:13px;font-weight:600;margin:4px 0 16px}
+.diagram-scroll,.table-scroll{overflow:auto;max-width:100%;scrollbar-width:thin;scrollbar-color:#48625a transparent}
+svg{display:block;width:100%;height:auto}
+svg text{fill:var(--text);font-family:"Segoe UI",Arial,Helvetica,sans-serif;font-size:16px}
+.node rect,.node polygon,.node path,.node ellipse{fill:#15282b;stroke:#78928e;stroke-width:1.5}
+.node.changed rect,.node.changed polygon,.node.changed path,.node.changed ellipse{fill:#24432d;stroke:var(--accent);stroke-width:2}
+.node.external rect{stroke-dasharray:6 4}
+.node circle{fill:var(--accent);stroke:var(--accent);stroke-width:2}
+.node.end circle:first-of-type{fill:var(--bg)}
+.edge{fill:none;stroke:#89aba4;stroke-width:1.5}
+.arrowhead{fill:#89aba4}
+.edge-label{font-size:14px;paint-order:stroke;stroke:var(--panel);stroke-width:5px;stroke-linejoin:round}
+table{width:100%;border-collapse:collapse;font-size:13px;min-width:440px}
+caption{text-align:left;font-size:20px;letter-spacing:-.02em;font-weight:600;margin-bottom:20px}
+th,td{text-align:left;vertical-align:top;padding:16px 12px;border-bottom:1px solid var(--line);overflow-wrap:anywhere}
+th{color:var(--accent);font:10px Consolas,monospace;letter-spacing:.08em;text-transform:uppercase;background:#b8f87a06}
+.sources table{min-width:600px}
+.evidence{border-top:1px solid var(--line);margin-top:24px;padding-top:10px;color:var(--muted)}
+.evidence p{font-size:13px}
+.confidence-label{color:var(--accent);font:11px Consolas,monospace}
+.unknowns,.sources{border-top:1px solid var(--line);padding-block:56px}
+.unknowns h2,.sources h2{font-size:30px}
+.empty{padding:48px 56px;max-width:1440px;margin:auto}
+.muted,footer{color:var(--muted);font-size:12px}
+footer{border-top:1px solid var(--line);padding-block:32px}
+html:not(.enhanced) .visual-wrap{display:none}
+html:not(.enhanced) .mobile-visual{display:block}
+html:not(.enhanced) .story{grid-template-columns:minmax(0,1fr)}
+@media(min-width:761px) and (prefers-reduced-motion:no-preference){.parallax-layer{will-change:transform}}
+@media(max-width:1100px){
+ .hero,.view-intro,.sources,.unknowns,footer{padding-inline:32px}
+ .story,.tabs-shell{padding-inline:32px}.story{gap:40px}
+ .hero-art{right:-80px;width:58%;opacity:.8}
+}
+@media(max-width:900px){
+ .story{grid-template-columns:minmax(0,1fr);gap:0}
+ .visual-wrap{display:none}
+ .mobile-visual{display:block;margin:28px 0 0;background:var(--panel);padding:22px;border-radius:14px;border:1px solid var(--line)}
+ .step{min-height:0;padding:42px 0;border-top:1px solid var(--line)}
+ .step p{max-width:680px}
+}
+@media(max-width:760px){
+ .hero{min-height:680px;padding-top:24px}
+ .hero-copy{width:100%;padding:86px 0 80px}
+ h1{font-size:clamp(52px,10vw,78px);max-width:12ch}
+ .hero-art{top:100px;right:-160px;bottom:20px;width:560px;opacity:.3;z-index:-1}
+ .parallax-layer{transform:none!important}
+ .edition{font-size:9px;letter-spacing:.06em}
+ .hero-bottom{font-size:9px;letter-spacing:.08em}
+ .view-intro{padding-top:46px;padding-bottom:36px}
+}
+@media(max-width:560px){
+ .hero,.view-intro,.sources,.unknowns,footer{padding-inline:22px}
+ .story,.tabs-shell{padding-inline:22px}
+ .hero{min-height:640px}
+ .hero-copy{padding-top:70px;padding-bottom:70px}
+ .masthead{gap:12px}.edition{max-width:94px;text-align:right}
+ .hero-bottom>span{max-width:110px}
+ .hero-bottom a{gap:14px}
+ .tabs-shell{gap:26px}
+ .tabs button{min-height:72px;font-size:12px;gap:8px}
+ .comparison{grid-template-columns:minmax(0,1fr)}
+ .mobile-visual{padding:18px}
+ .step h2{font-size:34px}
+ .step p,.view-intro>p{font-size:16px}
+ .empty{padding:32px 22px}
+}
+@media(prefers-reduced-motion:reduce){
+ *,*::before,*::after{scroll-behavior:auto!important;animation:none!important;transition:none!important}
+ .parallax-layer{transform:none!important;will-change:auto!important}
+}
+@media print{
+ :root{--bg:#fff;--panel:#fff;--text:#172526;--muted:#425653;--line:#acbdb7;--accent:#315b23;color-scheme:light}
+ body{background:#fff}body::before,.hero-art,.tabs,.hero-bottom,.hero-rule{display:none!important}
+ .hero{min-height:0;padding:24px 0}.hero-copy{padding:20px 0;width:100%}h1{font-size:42px;max-width:none}
+ .hero,.view-intro,.story,.sources,.unknowns,footer{max-width:none;padding-inline:0}
+ .view-intro{padding-block:24px}.story{display:block}.visual-wrap{display:none}
+ .step{min-height:0;padding-block:24px;break-inside:avoid}
+ .mobile-visual{display:block;padding:16px;border:1px solid var(--line);border-radius:8px;margin-block:16px}
+ .box{background:#fff}.diagram-scroll,.table-scroll{overflow:visible}
+ svg{min-width:0!important;max-width:100%!important}table,.sources table{min-width:0}
+ .node rect,.node polygon,.node path,.node ellipse{fill:#eef3ef;stroke:#536c63}
+ .node.changed rect,.node.changed polygon,.node.changed path,.node.changed ellipse{fill:#dceacd;stroke:var(--accent)}
+ .edge{stroke:#536c63}.arrowhead{fill:#536c63}.change-notice{background:#eef3ef}
+ footer{font-size:10px}
+}
+</style></head>
+<body>
+<a class="skip-link" href="#change-views">Skip to report</a>
+<header class="hero">
+  <div class="masthead"><div class="wordmark"><span class="brand-mark" aria-hidden="true">t</span>Tovli Explain</div><span class="edition">Change report / Before &amp; After</span></div>
+  <div class="hero-copy"><div class="eyebrow">Understand the change</div><h1>Invoice lookup changes</h1><div class="hero-rule" aria-hidden="true"></div></div>
+  <div class="hero-art" aria-hidden="true">
+    <div class="parallax-layer" data-parallax="0.08"><div class="art-grid"></div><div class="art-halo"></div></div>
+    <div class="parallax-layer" data-parallax="0.18"><div class="art-orbit"></div><div class="art-orbit second"></div><div class="art-orbit third"></div></div>
+    <div class="parallax-layer" data-parallax="0.28"><div class="art-core"><span>&#916;</span></div><div class="art-coordinate">BEFORE &nbsp; &#8594; &nbsp; AFTER</div></div>
+    <div class="parallax-layer" data-parallax="0.36"><div class="art-satellite"></div><div class="art-satellite second"></div></div>
+  </div>
+  <div class="hero-bottom"><span>Business + Technical</span><a href="#change-views">Explore the report <span class="scroll-arrow" aria-hidden="true">&#8595;</span></a></div>
+</header>
+<nav id="change-views" class="tabs" role="tablist" aria-label="Change category"><div class="reading-progress" aria-hidden="true"></div><div class="tabs-shell"><button id="tab-business" role="tab" aria-controls="view-business" aria-selected="true" tabindex="0"><span class="tab-number" aria-hidden="true">01</span>Business changes</button><button id="tab-technical" role="tab" aria-controls="view-technical" aria-selected="false" tabindex="-1"><span class="tab-number" aria-hidden="true">02</span>Technical changes</button></div></nav>
+<section id="view-business" data-view="business" role="tabpanel" aria-labelledby="tab-business"><div class="view-intro"><h2>Business changes</h2><p>Previously, a missing invoice caused a search error. Now the search shows no matches.</p></div><main class="story"><article><section class="step" id="scene-0" data-scene="0"><div class="scene-heading"><span class="scene-number" aria-hidden="true">01</span><div class="eyebrow">Business outcome</div></div><h2>An unsuccessful search shows no matches</h2><p>Before this change, an unsuccessful invoice search showed an error.</p><p>After this change, the user sees that no invoice matches the search.</p><p>The user can change the search and try again.</p><div class="confidence">Evidence: <span class="pill ">direct</span></div><div class="mobile-visual"><div class="comparison"><div class="box"><h3>BEFORE</h3><ul><li>The user searches for an invoice.</li><li>The invoice does not exist.</li><li>The user sees a search error.</li></ul></div><div class="box"><h3>AFTER</h3><ul><li>The user searches for an invoice.</li><li>The invoice does not exist.</li><li>The user sees no matches.</li></ul></div></div></div></section><section class="step" id="scene-1" data-scene="1"><div class="scene-heading"><span class="scene-number" aria-hidden="true">02</span><div class="eyebrow">Business workflow</div></div><h2>The search has a clear outcome for each branch</h2><p>BEFORE: When the invoice exists, the search shows the invoice.</p><p>BEFORE: When the invoice does not exist, the search shows an error.</p><p>AFTER: An existing invoice is still shown.</p><p>AFTER: A missing invoice shows no matches instead of an error.</p><p>The search condition is the same in both flows.</p><div class="confidence">Evidence: <span class="pill ">corroborated</span></div><div class="mobile-visual"><div class="diagram-pair"><section class="diagram-state"><h3 class="state-label">BEFORE</h3><figure><figcaption>Invoice search</figcaption><div class="diagram-scroll"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 510 595" style="min-width:510px;max-width:510px" role="img" aria-label="Invoice search"><title>Invoice search</title><path class="edge" d="M 110,94.0 L 110,134.5 L 110,175.0"/><polygon class="arrowhead" points="110,175.0 106.0,165.0 114.0,165.0"/><path class="edge" d="M 110,275.0 L 110,305.5 L 110,336.0"/><polygon class="arrowhead" points="110,336.0 106.0,326.0 114.0,326.0"/><text class="edge-label" x="110.0" y="293.5" text-anchor="middle">Yes</text><path class="edge" d="M 110,275.0 L 110,305.5 L 330,305.5 L 330,336.0"/><polygon class="arrowhead" points="330,336.0 326.0,326.0 334.0,326.0"/><text class="edge-label" x="220.0" y="293.5" text-anchor="middle">No</text><path class="edge" d="M 110,404.0 L 110,452.5 L 110,501.0"/><polygon class="arrowhead" points="110,501.0 106.0,491.0 114.0,491.0"/><path class="edge" d="M 330,404.0 L 330,452.5 L 110,452.5 L 110,501.0"/><polygon class="arrowhead" points="110,501.0 106.0,491.0 114.0,491.0"/><g class="node start"><title>Search requested</title><circle cx="110" cy="80" r="12"/><text text-anchor="middle"><tspan x="110" y="55">Search requested</tspan></text></g><g class="node decision"><title>Invoice found?</title><polygon points="110,175.0 195.0,225 110,275.0 25.0,225"/><text text-anchor="middle"><tspan x="110" y="230">Invoice found?</tspan></text></g><g class="node action"><title>Show invoice</title><rect x="25.0" y="336.0" width="170" height="68" rx="12"/><text text-anchor="middle"><tspan x="110" y="375">Show invoice</tspan></text></g><g class="node action"><title>Show search error</title><rect x="245.0" y="336.0" width="170" height="68" rx="12"/><text text-anchor="middle"><tspan x="330" y="375">Show search error</tspan></text></g><g class="node end"><title>Search complete</title><circle cx="110" cy="515" r="12"/><circle cx="110" cy="515" r="7"/><text text-anchor="middle"><tspan x="110" y="550">Search complete</tspan></text></g></svg></div></figure></section><section class="diagram-state"><h3 class="state-label">AFTER</h3><figure><figcaption>Invoice search</figcaption><div class="diagram-scroll"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 510 595" style="min-width:510px;max-width:510px" role="img" aria-label="Invoice search"><title>Invoice search</title><path class="edge" d="M 110,94.0 L 110,134.5 L 110,175.0"/><polygon class="arrowhead" points="110,175.0 106.0,165.0 114.0,165.0"/><path class="edge" d="M 110,275.0 L 110,305.5 L 110,336.0"/><polygon class="arrowhead" points="110,336.0 106.0,326.0 114.0,326.0"/><text class="edge-label" x="110.0" y="293.5" text-anchor="middle">Yes</text><path class="edge" d="M 110,275.0 L 110,305.5 L 330,305.5 L 330,336.0"/><polygon class="arrowhead" points="330,336.0 326.0,326.0 334.0,326.0"/><text class="edge-label" x="220.0" y="293.5" text-anchor="middle">No</text><path class="edge" d="M 110,404.0 L 110,452.5 L 110,501.0"/><polygon class="arrowhead" points="110,501.0 106.0,491.0 114.0,491.0"/><path class="edge" d="M 330,404.0 L 330,452.5 L 110,452.5 L 110,501.0"/><polygon class="arrowhead" points="110,501.0 106.0,491.0 114.0,491.0"/><g class="node start"><title>Search requested</title><circle cx="110" cy="80" r="12"/><text text-anchor="middle"><tspan x="110" y="55">Search requested</tspan></text></g><g class="node decision"><title>Invoice found?</title><polygon points="110,175.0 195.0,225 110,275.0 25.0,225"/><text text-anchor="middle"><tspan x="110" y="230">Invoice found?</tspan></text></g><g class="node action"><title>Show invoice</title><rect x="25.0" y="336.0" width="170" height="68" rx="12"/><text text-anchor="middle"><tspan x="110" y="375">Show invoice</tspan></text></g><g class="node action"><title>Show no matches</title><rect x="245.0" y="336.0" width="170" height="68" rx="12"/><text text-anchor="middle"><tspan x="330" y="375">Show no matches</tspan></text></g><g class="node end"><title>Search complete</title><circle cx="110" cy="515" r="12"/><circle cx="110" cy="515" r="7"/><text text-anchor="middle"><tspan x="110" y="550">Search complete</tspan></text></g></svg></div></figure></section></div></div></section></article><aside class="visual-wrap" aria-label="Scene visual"><div class="visual-card"></div></aside></main><section class="unknowns"><h2>Unknowns</h2><ul><li>It is unknown whether all invoice search workflows should use the same outcome.</li></ul></section></section><section id="view-technical" data-view="technical" role="tabpanel" aria-labelledby="tab-technical" hidden><div class="view-intro"><h2>Technical changes</h2><p>Missing invoices change from HTTP 404 to an empty HTTP 200 result; InvoiceLookup takes ownership of that result.</p><div class="meta"><span class="pill ">branch: feature/invoice-search</span><span class="pill ">base: abc1234</span><span class="pill ">head: def5678</span><span class="pill ">risk: medium</span><span class="pill ">Includes staged and unstaged changes</span></div><p>Update consumers before enabling the new response contract.</p></div><main class="story"><article><section class="step" id="scene-2" data-scene="2"><div class="scene-heading"><span class="scene-number" aria-hidden="true">01</span><div class="eyebrow">Contract changes</div></div><h2>Consumers must handle a successful empty response</h2><p>BEFORE: InvoiceLookup.Find returns null when an invoice is missing.</p><p>BEFORE: GET /invoices/{id} maps that result to HTTP 404.</p><p>AFTER: InvoiceLookup.Find returns an explicit empty InvoiceSearchResult.</p><p>AFTER: The endpoint returns HTTP 200 with an empty items array.</p><p>Consumers that depend on HTTP 404 must change.</p><div class="evidence"><p><span class="confidence-label">direct</span> Illustrative: GetInvoice.cs, InvoiceLookup.cs, and response contract tests</p></div><div class="mobile-visual"><div class="table-scroll"><table><caption>Contract changes</caption><thead><tr><th>Contract</th><th>BEFORE</th><th>AFTER</th><th>Compatibility</th></tr></thead><tbody><tr><td>GET /invoices/{id}: missing invoice</td><td>HTTP 404</td><td>HTTP 200 with {&quot;items&quot;: []}</td><td>Consumers must handle an empty items array.</td></tr><tr><td>InvoiceLookup.Find(id)</td><td>Returns null for a missing invoice.</td><td>Returns InvoiceSearchResult with an empty Items collection.</td><td>The endpoint consumes an explicit search result.</td></tr></tbody></table></div></div></section><section class="step" id="scene-3" data-scene="3"><div class="scene-heading"><span class="scene-number" aria-hidden="true">02</span><div class="eyebrow">Component changes</div></div><h2>InvoiceLookup owns the empty result</h2><p>BEFORE: InvoiceLookup returns null when the invoice is missing.</p><p>BEFORE: GetInvoice uses MissingInvoiceErrorMapper to create the HTTP 404 response.</p><p>AFTER: InvoiceLookup creates the empty InvoiceSearchResult.</p><p>AFTER: GetInvoice serializes the result without MissingInvoiceErrorMapper.</p><p>InvoiceStore retains its existing read contract in both states.</p><div class="evidence"><p><span class="confidence-label">direct</span> Illustrative: GetInvoice.cs and InvoiceLookup.cs dependency changes</p></div><div class="mobile-visual"><div class="diagram-pair"><section class="diagram-state"><h3 class="state-label">BEFORE</h3><figure><figcaption>Lookup component relationships</figcaption><div class="diagram-scroll"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 510 595" style="min-width:510px;max-width:510px" role="img" aria-label="Lookup component relationships"><title>Lookup component relationships</title><path class="edge" d="M 110,114.0 L 110,152.5 L 110,191.0"/><polygon class="arrowhead" points="110,191.0 106.0,181.0 114.0,181.0"/><text class="edge-label" x="110.0" y="140.5" text-anchor="middle">GET /invoices/{id}</text><path class="edge" d="M 110,259.0 L 110,297.5 L 110,336.0"/><polygon class="arrowhead" points="110,336.0 106.0,326.0 114.0,326.0"/><text class="edge-label" x="110.0" y="285.5" text-anchor="middle">Find: invoice or null</text><path class="edge" d="M 110,404.0 L 110,442.5 L 110,481.0"/><polygon class="arrowhead" points="110,481.0 106.0,471.0 114.0,471.0"/><text class="edge-label" x="110.0" y="430.5" text-anchor="middle">Read invoice</text><path class="edge" d="M 195.0,225 L 245.0,225"/><polygon class="arrowhead" points="245.0,225 235.0,229.0 235.0,221.0"/><text class="edge-label" x="220.0" y="213" text-anchor="middle">Null to HTTP 404</text><g class="node external"><title>Invoice client</title><rect x="25.0" y="46.0" width="170" height="68" rx="12"/><text text-anchor="middle"><tspan x="110" y="85">Invoice client</tspan></text></g><g class="node component"><title>GetInvoice endpoint</title><rect x="25.0" y="191.0" width="170" height="68" rx="12"/><text text-anchor="middle"><tspan x="110" y="230">GetInvoice endpoint</tspan></text></g><g class="node component"><title>InvoiceLookup</title><rect x="25.0" y="336.0" width="170" height="68" rx="12"/><text text-anchor="middle"><tspan x="110" y="375">InvoiceLookup</tspan></text></g><g class="node store"><title>InvoiceStore</title><path d="M 25.0,491.0 v 48 a 85.0,10 0 0 0 170,0 v -48"/><ellipse cx="110" cy="491.0" rx="85.0" ry="10"/><text text-anchor="middle"><tspan x="110" y="525">InvoiceStore</tspan></text></g><g class="node component"><title>MissingInvoiceErrorMapper</title><rect x="245.0" y="191.0" width="170" height="68" rx="12"/><text text-anchor="middle"><tspan x="330" y="221">MissingInvoiceErrorMap</tspan><tspan x="330" y="239">per</tspan></text></g></svg></div></figure></section><section class="diagram-state"><h3 class="state-label">AFTER</h3><figure><figcaption>Lookup component relationships</figcaption><div class="diagram-scroll"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 290 595" style="min-width:290px;max-width:290px" role="img" aria-label="Lookup component relationships"><title>Lookup component relationships</title><path class="edge" d="M 110,114.0 L 110,152.5 L 110,191.0"/><polygon class="arrowhead" points="110,191.0 106.0,181.0 114.0,181.0"/><text class="edge-label" x="110.0" y="140.5" text-anchor="middle">GET /invoices/{id}</text><path class="edge" d="M 110,259.0 L 110,297.5 L 110,336.0"/><polygon class="arrowhead" points="110,336.0 106.0,326.0 114.0,326.0"/><text class="edge-label" x="110.0" y="285.5" text-anchor="middle">Find: explicit result</text><path class="edge" d="M 110,404.0 L 110,442.5 L 110,481.0"/><polygon class="arrowhead" points="110,481.0 106.0,471.0 114.0,471.0"/><text class="edge-label" x="110.0" y="430.5" text-anchor="middle">Read invoice</text><g class="node external"><title>Invoice client</title><rect x="25.0" y="46.0" width="170" height="68" rx="12"/><text text-anchor="middle"><tspan x="110" y="85">Invoice client</tspan></text></g><g class="node component changed"><title>GetInvoice endpoint</title><rect x="25.0" y="191.0" width="170" height="68" rx="12"/><text text-anchor="middle"><tspan x="110" y="230">GetInvoice endpoint</tspan></text></g><g class="node component changed"><title>InvoiceLookup</title><rect x="25.0" y="336.0" width="170" height="68" rx="12"/><text text-anchor="middle"><tspan x="110" y="375">InvoiceLookup</tspan></text></g><g class="node store"><title>InvoiceStore</title><path d="M 25.0,491.0 v 48 a 85.0,10 0 0 0 170,0 v -48"/><ellipse cx="110" cy="491.0" rx="85.0" ry="10"/><text text-anchor="middle"><tspan x="110" y="525">InvoiceStore</tspan></text></g></svg></div></figure></section></div><p class="muted">Highlighted nodes identify changed components.</p></div></section><section class="step" id="scene-4" data-scene="4"><div class="scene-heading"><span class="scene-number" aria-hidden="true">03</span><div class="eyebrow">Deployment and rollback</div></div><h2>Consumer compatibility controls the rollout</h2><p>Update consumer response handling before enabling the changed API contract.</p><p>Verify both existing-invoice and missing-invoice responses.</p><p>No stored data format changes in this example.</p><div class="evidence"><p><span class="confidence-label">inferred</span> Illustrative: response tests cover both API outcomes; deployed consumer versions are unknown.</p></div><div class="mobile-visual"><h3>Deployment risk: medium</h3><div class="box"><h3>Requirements</h3><ul><li>Update consumer handlers to accept both response contracts.</li><li>Deploy the API contract change.</li></ul></div><div class="box"><h3>Rollback</h3><p>Application rollback is safe while consumers accept both response contracts.</p></div><div class="box"><h3>Production verification</h3><ul><li>Check that missing invoices return HTTP 200 with an empty items array.</li><li>Check that existing invoices retain their response contract.</li><li>Check consumer error rates.</li></ul></div><div class="box"><h3>Compatibility</h3><ul><li>The HTTP status and missing-invoice response body change.</li><li>The InvoiceStore read contract remains compatible.</li></ul></div></div></section></article><aside class="visual-wrap" aria-label="Scene visual"><div class="visual-card"></div></aside></main><section class="unknowns"><h2>Unknowns</h2><ul><li>The repository does not identify every consumer of the lookup API.</li><li>This example uses fictional changes, source paths, and Git references.</li></ul></section><aside class="sources"><h2>Source evidence</h2><div class="table-scroll"><table><thead><tr><th>Scene</th><th>Category</th><th>Confidence</th><th>Source</th></tr></thead><tbody><tr><td>business-outcome</td><td>business</td><td>direct</td><td>Illustrative: src/Invoices/GetInvoice.cs and tests/Invoices/GetInvoiceTests.cs</td></tr><tr><td>business-flow</td><td>business</td><td>corroborated</td><td>Illustrative: search acceptance scenario and GetInvoiceTests.cs</td></tr><tr><td>technical-contracts</td><td>technical</td><td>direct</td><td>Illustrative: GetInvoice.cs, InvoiceLookup.cs, and response contract tests</td></tr><tr><td>technical-components</td><td>technical</td><td>direct</td><td>Illustrative: GetInvoice.cs and InvoiceLookup.cs dependency changes</td></tr><tr><td>technical-deployment</td><td>technical</td><td>inferred</td><td>Illustrative: response tests cover both API outcomes; deployed consumer versions are unknown.</td></tr></tbody></table></div></aside><p class="view-intro muted">abc1234..def5678 plus local edits</p></section>
+<footer>STE status: Writing rules applied. Controlled vocabulary not formally verified.</footer>
+<template id="visual-0"><div class="visual-label">business view</div><div class="visual-title">An unsuccessful search shows no matches</div><div class="comparison"><div class="box"><h3>BEFORE</h3><ul><li>The user searches for an invoice.</li><li>The invoice does not exist.</li><li>The user sees a search error.</li></ul></div><div class="box"><h3>AFTER</h3><ul><li>The user searches for an invoice.</li><li>The invoice does not exist.</li><li>The user sees no matches.</li></ul></div></div></template><template id="visual-1"><div class="visual-label">business view</div><div class="visual-title">The search has a clear outcome for each branch</div><div class="diagram-pair"><section class="diagram-state"><h3 class="state-label">BEFORE</h3><figure><figcaption>Invoice search</figcaption><div class="diagram-scroll"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 510 595" style="min-width:510px;max-width:510px" role="img" aria-label="Invoice search"><title>Invoice search</title><path class="edge" d="M 110,94.0 L 110,134.5 L 110,175.0"/><polygon class="arrowhead" points="110,175.0 106.0,165.0 114.0,165.0"/><path class="edge" d="M 110,275.0 L 110,305.5 L 110,336.0"/><polygon class="arrowhead" points="110,336.0 106.0,326.0 114.0,326.0"/><text class="edge-label" x="110.0" y="293.5" text-anchor="middle">Yes</text><path class="edge" d="M 110,275.0 L 110,305.5 L 330,305.5 L 330,336.0"/><polygon class="arrowhead" points="330,336.0 326.0,326.0 334.0,326.0"/><text class="edge-label" x="220.0" y="293.5" text-anchor="middle">No</text><path class="edge" d="M 110,404.0 L 110,452.5 L 110,501.0"/><polygon class="arrowhead" points="110,501.0 106.0,491.0 114.0,491.0"/><path class="edge" d="M 330,404.0 L 330,452.5 L 110,452.5 L 110,501.0"/><polygon class="arrowhead" points="110,501.0 106.0,491.0 114.0,491.0"/><g class="node start"><title>Search requested</title><circle cx="110" cy="80" r="12"/><text text-anchor="middle"><tspan x="110" y="55">Search requested</tspan></text></g><g class="node decision"><title>Invoice found?</title><polygon points="110,175.0 195.0,225 110,275.0 25.0,225"/><text text-anchor="middle"><tspan x="110" y="230">Invoice found?</tspan></text></g><g class="node action"><title>Show invoice</title><rect x="25.0" y="336.0" width="170" height="68" rx="12"/><text text-anchor="middle"><tspan x="110" y="375">Show invoice</tspan></text></g><g class="node action"><title>Show search error</title><rect x="245.0" y="336.0" width="170" height="68" rx="12"/><text text-anchor="middle"><tspan x="330" y="375">Show search error</tspan></text></g><g class="node end"><title>Search complete</title><circle cx="110" cy="515" r="12"/><circle cx="110" cy="515" r="7"/><text text-anchor="middle"><tspan x="110" y="550">Search complete</tspan></text></g></svg></div></figure></section><section class="diagram-state"><h3 class="state-label">AFTER</h3><figure><figcaption>Invoice search</figcaption><div class="diagram-scroll"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 510 595" style="min-width:510px;max-width:510px" role="img" aria-label="Invoice search"><title>Invoice search</title><path class="edge" d="M 110,94.0 L 110,134.5 L 110,175.0"/><polygon class="arrowhead" points="110,175.0 106.0,165.0 114.0,165.0"/><path class="edge" d="M 110,275.0 L 110,305.5 L 110,336.0"/><polygon class="arrowhead" points="110,336.0 106.0,326.0 114.0,326.0"/><text class="edge-label" x="110.0" y="293.5" text-anchor="middle">Yes</text><path class="edge" d="M 110,275.0 L 110,305.5 L 330,305.5 L 330,336.0"/><polygon class="arrowhead" points="330,336.0 326.0,326.0 334.0,326.0"/><text class="edge-label" x="220.0" y="293.5" text-anchor="middle">No</text><path class="edge" d="M 110,404.0 L 110,452.5 L 110,501.0"/><polygon class="arrowhead" points="110,501.0 106.0,491.0 114.0,491.0"/><path class="edge" d="M 330,404.0 L 330,452.5 L 110,452.5 L 110,501.0"/><polygon class="arrowhead" points="110,501.0 106.0,491.0 114.0,491.0"/><g class="node start"><title>Search requested</title><circle cx="110" cy="80" r="12"/><text text-anchor="middle"><tspan x="110" y="55">Search requested</tspan></text></g><g class="node decision"><title>Invoice found?</title><polygon points="110,175.0 195.0,225 110,275.0 25.0,225"/><text text-anchor="middle"><tspan x="110" y="230">Invoice found?</tspan></text></g><g class="node action"><title>Show invoice</title><rect x="25.0" y="336.0" width="170" height="68" rx="12"/><text text-anchor="middle"><tspan x="110" y="375">Show invoice</tspan></text></g><g class="node action"><title>Show no matches</title><rect x="245.0" y="336.0" width="170" height="68" rx="12"/><text text-anchor="middle"><tspan x="330" y="375">Show no matches</tspan></text></g><g class="node end"><title>Search complete</title><circle cx="110" cy="515" r="12"/><circle cx="110" cy="515" r="7"/><text text-anchor="middle"><tspan x="110" y="550">Search complete</tspan></text></g></svg></div></figure></section></div></template><template id="visual-2"><div class="visual-label">technical view</div><div class="visual-title">Consumers must handle a successful empty response</div><div class="table-scroll"><table><caption>Contract changes</caption><thead><tr><th>Contract</th><th>BEFORE</th><th>AFTER</th><th>Compatibility</th></tr></thead><tbody><tr><td>GET /invoices/{id}: missing invoice</td><td>HTTP 404</td><td>HTTP 200 with {&quot;items&quot;: []}</td><td>Consumers must handle an empty items array.</td></tr><tr><td>InvoiceLookup.Find(id)</td><td>Returns null for a missing invoice.</td><td>Returns InvoiceSearchResult with an empty Items collection.</td><td>The endpoint consumes an explicit search result.</td></tr></tbody></table></div></template><template id="visual-3"><div class="visual-label">technical view</div><div class="visual-title">InvoiceLookup owns the empty result</div><div class="diagram-pair"><section class="diagram-state"><h3 class="state-label">BEFORE</h3><figure><figcaption>Lookup component relationships</figcaption><div class="diagram-scroll"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 510 595" style="min-width:510px;max-width:510px" role="img" aria-label="Lookup component relationships"><title>Lookup component relationships</title><path class="edge" d="M 110,114.0 L 110,152.5 L 110,191.0"/><polygon class="arrowhead" points="110,191.0 106.0,181.0 114.0,181.0"/><text class="edge-label" x="110.0" y="140.5" text-anchor="middle">GET /invoices/{id}</text><path class="edge" d="M 110,259.0 L 110,297.5 L 110,336.0"/><polygon class="arrowhead" points="110,336.0 106.0,326.0 114.0,326.0"/><text class="edge-label" x="110.0" y="285.5" text-anchor="middle">Find: invoice or null</text><path class="edge" d="M 110,404.0 L 110,442.5 L 110,481.0"/><polygon class="arrowhead" points="110,481.0 106.0,471.0 114.0,471.0"/><text class="edge-label" x="110.0" y="430.5" text-anchor="middle">Read invoice</text><path class="edge" d="M 195.0,225 L 245.0,225"/><polygon class="arrowhead" points="245.0,225 235.0,229.0 235.0,221.0"/><text class="edge-label" x="220.0" y="213" text-anchor="middle">Null to HTTP 404</text><g class="node external"><title>Invoice client</title><rect x="25.0" y="46.0" width="170" height="68" rx="12"/><text text-anchor="middle"><tspan x="110" y="85">Invoice client</tspan></text></g><g class="node component"><title>GetInvoice endpoint</title><rect x="25.0" y="191.0" width="170" height="68" rx="12"/><text text-anchor="middle"><tspan x="110" y="230">GetInvoice endpoint</tspan></text></g><g class="node component"><title>InvoiceLookup</title><rect x="25.0" y="336.0" width="170" height="68" rx="12"/><text text-anchor="middle"><tspan x="110" y="375">InvoiceLookup</tspan></text></g><g class="node store"><title>InvoiceStore</title><path d="M 25.0,491.0 v 48 a 85.0,10 0 0 0 170,0 v -48"/><ellipse cx="110" cy="491.0" rx="85.0" ry="10"/><text text-anchor="middle"><tspan x="110" y="525">InvoiceStore</tspan></text></g><g class="node component"><title>MissingInvoiceErrorMapper</title><rect x="245.0" y="191.0" width="170" height="68" rx="12"/><text text-anchor="middle"><tspan x="330" y="221">MissingInvoiceErrorMap</tspan><tspan x="330" y="239">per</tspan></text></g></svg></div></figure></section><section class="diagram-state"><h3 class="state-label">AFTER</h3><figure><figcaption>Lookup component relationships</figcaption><div class="diagram-scroll"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 290 595" style="min-width:290px;max-width:290px" role="img" aria-label="Lookup component relationships"><title>Lookup component relationships</title><path class="edge" d="M 110,114.0 L 110,152.5 L 110,191.0"/><polygon class="arrowhead" points="110,191.0 106.0,181.0 114.0,181.0"/><text class="edge-label" x="110.0" y="140.5" text-anchor="middle">GET /invoices/{id}</text><path class="edge" d="M 110,259.0 L 110,297.5 L 110,336.0"/><polygon class="arrowhead" points="110,336.0 106.0,326.0 114.0,326.0"/><text class="edge-label" x="110.0" y="285.5" text-anchor="middle">Find: explicit result</text><path class="edge" d="M 110,404.0 L 110,442.5 L 110,481.0"/><polygon class="arrowhead" points="110,481.0 106.0,471.0 114.0,471.0"/><text class="edge-label" x="110.0" y="430.5" text-anchor="middle">Read invoice</text><g class="node external"><title>Invoice client</title><rect x="25.0" y="46.0" width="170" height="68" rx="12"/><text text-anchor="middle"><tspan x="110" y="85">Invoice client</tspan></text></g><g class="node component changed"><title>GetInvoice endpoint</title><rect x="25.0" y="191.0" width="170" height="68" rx="12"/><text text-anchor="middle"><tspan x="110" y="230">GetInvoice endpoint</tspan></text></g><g class="node component changed"><title>InvoiceLookup</title><rect x="25.0" y="336.0" width="170" height="68" rx="12"/><text text-anchor="middle"><tspan x="110" y="375">InvoiceLookup</tspan></text></g><g class="node store"><title>InvoiceStore</title><path d="M 25.0,491.0 v 48 a 85.0,10 0 0 0 170,0 v -48"/><ellipse cx="110" cy="491.0" rx="85.0" ry="10"/><text text-anchor="middle"><tspan x="110" y="525">InvoiceStore</tspan></text></g></svg></div></figure></section></div><p class="muted">Highlighted nodes identify changed components.</p></template><template id="visual-4"><div class="visual-label">technical view</div><div class="visual-title">Consumer compatibility controls the rollout</div><h3>Deployment risk: medium</h3><div class="box"><h3>Requirements</h3><ul><li>Update consumer handlers to accept both response contracts.</li><li>Deploy the API contract change.</li></ul></div><div class="box"><h3>Rollback</h3><p>Application rollback is safe while consumers accept both response contracts.</p></div><div class="box"><h3>Production verification</h3><ul><li>Check that missing invoices return HTTP 200 with an empty items array.</li><li>Check that existing invoices retain their response contract.</li><li>Check consumer error rates.</li></ul></div><div class="box"><h3>Compatibility</h3><ul><li>The HTTP status and missing-invoice response body change.</li><li>The InvoiceStore read contract remains compatible.</li></ul></div></template><script>
+const tabs = Array.from(document.querySelectorAll('[role="tab"]'));
+const panels = Array.from(document.querySelectorAll('[data-view]'));
+let current = document.querySelector('[data-view]:not([hidden])');
+const root = document.documentElement;
+const hero = document.querySelector('.hero');
+const layers = Array.from(document.querySelectorAll('.hero-art [data-parallax]'));
+const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+const compactViewport = window.matchMedia('(max-width: 760px)');
+let scheduled = false;
+function updateDepth() {
+  const distance = Math.max(0, root.scrollHeight - window.innerHeight);
+  root.style.setProperty('--read-progress', distance ? Math.min(1, Math.max(0, window.scrollY / distance)) : 0);
+  if (reducedMotion.matches || compactViewport.matches) {
+    layers.forEach(layer => layer.style.removeProperty('transform'));
+    return;
+  }
+  // Read layout once; transform decorative wrappers only. Native scrolling stays intact.
+  const offset = Math.max(0, Math.min(window.scrollY, hero.offsetHeight));
+  layers.forEach(layer => {
+    const shift = offset * Number(layer.dataset.parallax);
+    layer.style.transform = 'translate3d(0,' + shift.toFixed(2) + 'px,0)';
+  });
+}
+function activate(step) {
+  current.querySelectorAll('.step').forEach(item => item.classList.toggle('active', item === step));
+  const card = current.querySelector('.visual-card');
+  const template = document.getElementById('visual-' + step.dataset.scene);
+  if (card && template && card.dataset.scene !== step.dataset.scene) {
+    card.replaceChildren(template.content.cloneNode(true));
+    card.dataset.scene = step.dataset.scene;
+    card.scrollTop = 0;
+  }
+}
+function update() {
+  scheduled = false;
+  updateDepth();
+  const steps = Array.from(current.querySelectorAll('.step'));
+  if (!steps.length) return;
+  const focus = window.innerHeight * 0.5;
+  const nearest = steps.reduce((best, step) => {
+    const rect = step.getBoundingClientRect();
+    const distance = Math.abs(rect.top + rect.height / 2 - focus);
+    return !best || distance < best.distance ? {step, distance} : best;
+  }, null);
+  activate(nearest.step);
+}
+function selectTab(tab, scroll = true) {
+  tabs.forEach(item => {
+    const selected = item === tab;
+    item.setAttribute('aria-selected', String(selected));
+    item.tabIndex = selected ? 0 : -1;
+  });
+  panels.forEach(panel => { panel.hidden = panel.id !== tab.getAttribute('aria-controls'); });
+  current = document.getElementById(tab.getAttribute('aria-controls'));
+  if (scroll) document.querySelector('.tabs').scrollIntoView({block:'start', behavior:'instant'});
+  update();
+}
+tabs.forEach((tab, index) => {
+  tab.addEventListener('click', () => selectTab(tab));
+  tab.addEventListener('keydown', event => {
+    if (!['ArrowLeft', 'ArrowRight', 'Home', 'End'].includes(event.key)) return;
+    event.preventDefault();
+    const next = event.key === 'Home' ? 0 : event.key === 'End' ? tabs.length - 1
+      : (index + (event.key === 'ArrowRight' ? 1 : -1) + tabs.length) % tabs.length;
+    tabs[next].focus();
+    selectTab(tabs[next]);
+  });
+});
+function scheduleUpdate() {
+  if (!scheduled) { scheduled = true; requestAnimationFrame(update); }
+}
+window.addEventListener('scroll', scheduleUpdate, {passive:true});
+window.addEventListener('resize', scheduleUpdate);
+reducedMotion.addEventListener('change', scheduleUpdate);
+compactViewport.addEventListener('change', scheduleUpdate);
+update();
+root.classList.add('enhanced');
+</script>
+</body></html>

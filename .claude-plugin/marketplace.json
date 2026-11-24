@@ -1,0 +1,15 @@
+{
+  "name": "tovli-explainer",
+  "owner": {
+    "name": "Tovli"
+  },
+  "metadata": {
+    "description": "Explain Git branch changes and create a standalone HTML report."
+  },
+  "plugins": [
+    {
+      "name": "tovli-explainer",
+      "source": "./plugins/tovli-explainer"
+    }
+  ]
+}

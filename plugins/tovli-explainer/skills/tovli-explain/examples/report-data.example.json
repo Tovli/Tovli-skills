@@ -1,0 +1,424 @@
+{
+  "meta": {
+    "title": "Invoice lookup changes",
+    "branch": "feature/invoice-search",
+    "base": "abc1234",
+    "head": "def5678",
+    "commit_range": "abc1234..def5678 plus local edits",
+    "worktree_status": "Includes staged and unstaged changes",
+    "ste_status": "Writing rules applied. Controlled vocabulary not formally verified."
+  },
+  "summary": {
+    "change_status": "changed",
+    "business_change_status": "changed",
+    "technical_change_status": "changed",
+    "purpose": "Previously, a missing invoice caused a search error. Now the search shows no matches.",
+    "technical_purpose": "Missing invoices change from HTTP 404 to an empty HTTP 200 result; InvoiceLookup takes ownership of that result.",
+    "risk_level": "medium",
+    "deployment_action": "Update consumers before enabling the new response contract.",
+    "confidence": "corroborated"
+  },
+  "scenes": [
+    {
+      "id": "business-outcome",
+      "category": "business",
+      "eyebrow": "Business outcome",
+      "title": "An unsuccessful search shows no matches",
+      "narrative": [
+        "Before this change, an unsuccessful invoice search showed an error.",
+        "After this change, the user sees that no invoice matches the search.",
+        "The user can change the search and try again."
+      ],
+      "visual": {
+        "type": "before-after",
+        "before": [
+          "The user searches for an invoice.",
+          "The invoice does not exist.",
+          "The user sees a search error."
+        ],
+        "after": [
+          "The user searches for an invoice.",
+          "The invoice does not exist.",
+          "The user sees no matches."
+        ]
+      },
+      "evidence": [
+        {
+          "label": "direct",
+          "detail": "Illustrative: src/Invoices/GetInvoice.cs and tests/Invoices/GetInvoiceTests.cs"
+        }
+      ]
+    },
+    {
+      "id": "business-flow",
+      "category": "business",
+      "eyebrow": "Business workflow",
+      "title": "The search has a clear outcome for each branch",
+      "narrative": [
+        "BEFORE: When the invoice exists, the search shows the invoice.",
+        "BEFORE: When the invoice does not exist, the search shows an error.",
+        "AFTER: An existing invoice is still shown.",
+        "AFTER: A missing invoice shows no matches instead of an error.",
+        "The search condition is the same in both flows."
+      ],
+      "visual": {
+        "type": "activity",
+        "before": {
+          "title": "Invoice search",
+          "nodes": [
+            {
+              "id": "start",
+              "kind": "start",
+              "label": "Search requested",
+              "row": 0,
+              "column": 0
+            },
+            {
+              "id": "found",
+              "kind": "decision",
+              "label": "Invoice found?",
+              "row": 1,
+              "column": 0
+            },
+            {
+              "id": "show",
+              "kind": "action",
+              "label": "Show invoice",
+              "row": 2,
+              "column": 0
+            },
+            {
+              "id": "empty",
+              "kind": "action",
+              "label": "Show search error",
+              "row": 2,
+              "column": 1
+            },
+            {
+              "id": "end",
+              "kind": "end",
+              "label": "Search complete",
+              "row": 3,
+              "column": 0
+            }
+          ],
+          "edges": [
+            {
+              "from": "start",
+              "to": "found"
+            },
+            {
+              "from": "found",
+              "to": "show",
+              "label": "Yes"
+            },
+            {
+              "from": "found",
+              "to": "empty",
+              "label": "No"
+            },
+            {
+              "from": "show",
+              "to": "end"
+            },
+            {
+              "from": "empty",
+              "to": "end"
+            }
+          ]
+        },
+        "after": {
+          "title": "Invoice search",
+          "nodes": [
+            {
+              "id": "start",
+              "kind": "start",
+              "label": "Search requested",
+              "row": 0,
+              "column": 0
+            },
+            {
+              "id": "found",
+              "kind": "decision",
+              "label": "Invoice found?",
+              "row": 1,
+              "column": 0
+            },
+            {
+              "id": "show",
+              "kind": "action",
+              "label": "Show invoice",
+              "row": 2,
+              "column": 0
+            },
+            {
+              "id": "empty",
+              "kind": "action",
+              "label": "Show no matches",
+              "row": 2,
+              "column": 1
+            },
+            {
+              "id": "end",
+              "kind": "end",
+              "label": "Search complete",
+              "row": 3,
+              "column": 0
+            }
+          ],
+          "edges": [
+            {
+              "from": "start",
+              "to": "found"
+            },
+            {
+              "from": "found",
+              "to": "show",
+              "label": "Yes"
+            },
+            {
+              "from": "found",
+              "to": "empty",
+              "label": "No"
+            },
+            {
+              "from": "show",
+              "to": "end"
+            },
+            {
+              "from": "empty",
+              "to": "end"
+            }
+          ]
+        }
+      },
+      "evidence": [
+        {
+          "label": "corroborated",
+          "detail": "Illustrative: search acceptance scenario and GetInvoiceTests.cs"
+        }
+      ]
+    },
+    {
+      "id": "technical-contracts",
+      "category": "technical",
+      "eyebrow": "Contract changes",
+      "title": "Consumers must handle a successful empty response",
+      "narrative": [
+        "BEFORE: InvoiceLookup.Find returns null when an invoice is missing.",
+        "BEFORE: GET /invoices/{id} maps that result to HTTP 404.",
+        "AFTER: InvoiceLookup.Find returns an explicit empty InvoiceSearchResult.",
+        "AFTER: The endpoint returns HTTP 200 with an empty items array.",
+        "Consumers that depend on HTTP 404 must change."
+      ],
+      "visual": {
+        "type": "contracts",
+        "rows": [
+          {
+            "name": "GET /invoices/{id}: missing invoice",
+            "before": "HTTP 404",
+            "after": "HTTP 200 with {\"items\": []}",
+            "compatibility": "Consumers must handle an empty items array."
+          },
+          {
+            "name": "InvoiceLookup.Find(id)",
+            "before": "Returns null for a missing invoice.",
+            "after": "Returns InvoiceSearchResult with an empty Items collection.",
+            "compatibility": "The endpoint consumes an explicit search result."
+          }
+        ]
+      },
+      "evidence": [
+        {
+          "label": "direct",
+          "detail": "Illustrative: GetInvoice.cs, InvoiceLookup.cs, and response contract tests"
+        }
+      ]
+    },
+    {
+      "id": "technical-components",
+      "category": "technical",
+      "eyebrow": "Component changes",
+      "title": "InvoiceLookup owns the empty result",
+      "narrative": [
+        "BEFORE: InvoiceLookup returns null when the invoice is missing.",
+        "BEFORE: GetInvoice uses MissingInvoiceErrorMapper to create the HTTP 404 response.",
+        "AFTER: InvoiceLookup creates the empty InvoiceSearchResult.",
+        "AFTER: GetInvoice serializes the result without MissingInvoiceErrorMapper.",
+        "InvoiceStore retains its existing read contract in both states."
+      ],
+      "visual": {
+        "type": "components",
+        "before": {
+          "title": "Lookup component relationships",
+          "nodes": [
+            {
+              "id": "client",
+              "kind": "external",
+              "label": "Invoice client",
+              "row": 0,
+              "column": 0
+            },
+            {
+              "id": "endpoint",
+              "kind": "component",
+              "label": "GetInvoice endpoint",
+              "row": 1,
+              "column": 0
+            },
+            {
+              "id": "lookup",
+              "kind": "component",
+              "label": "InvoiceLookup",
+              "row": 2,
+              "column": 0
+            },
+            {
+              "id": "store",
+              "kind": "store",
+              "label": "InvoiceStore",
+              "row": 3,
+              "column": 0
+            },
+            {
+              "id": "error-mapper",
+              "kind": "component",
+              "label": "MissingInvoiceErrorMapper",
+              "row": 1,
+              "column": 1
+            }
+          ],
+          "edges": [
+            {
+              "from": "client",
+              "to": "endpoint",
+              "label": "GET /invoices/{id}"
+            },
+            {
+              "from": "endpoint",
+              "to": "lookup",
+              "label": "Find: invoice or null"
+            },
+            {
+              "from": "lookup",
+              "to": "store",
+              "label": "Read invoice"
+            },
+            {
+              "from": "endpoint",
+              "to": "error-mapper",
+              "label": "Null to HTTP 404"
+            }
+          ]
+        },
+        "after": {
+          "title": "Lookup component relationships",
+          "nodes": [
+            {
+              "id": "client",
+              "kind": "external",
+              "label": "Invoice client",
+              "row": 0,
+              "column": 0
+            },
+            {
+              "id": "endpoint",
+              "kind": "component",
+              "label": "GetInvoice endpoint",
+              "changed": true,
+              "row": 1,
+              "column": 0
+            },
+            {
+              "id": "lookup",
+              "kind": "component",
+              "label": "InvoiceLookup",
+              "changed": true,
+              "row": 2,
+              "column": 0
+            },
+            {
+              "id": "store",
+              "kind": "store",
+              "label": "InvoiceStore",
+              "row": 3,
+              "column": 0
+            }
+          ],
+          "edges": [
+            {
+              "from": "client",
+              "to": "endpoint",
+              "label": "GET /invoices/{id}"
+            },
+            {
+              "from": "endpoint",
+              "to": "lookup",
+              "label": "Find: explicit result"
+            },
+            {
+              "from": "lookup",
+              "to": "store",
+              "label": "Read invoice"
+            }
+          ]
+        }
+      },
+      "evidence": [
+        {
+          "label": "direct",
+          "detail": "Illustrative: GetInvoice.cs and InvoiceLookup.cs dependency changes"
+        }
+      ]
+    },
+    {
+      "id": "technical-deployment",
+      "category": "technical",
+      "eyebrow": "Deployment and rollback",
+      "title": "Consumer compatibility controls the rollout",
+      "narrative": [
+        "Update consumer response handling before enabling the changed API contract.",
+        "Verify both existing-invoice and missing-invoice responses.",
+        "No stored data format changes in this example."
+      ],
+      "visual": {
+        "type": "deployment",
+        "risk": "medium",
+        "requires": [
+          "Update consumer handlers to accept both response contracts.",
+          "Deploy the API contract change."
+        ],
+        "rollback": "Application rollback is safe while consumers accept both response contracts.",
+        "verify": [
+          "Check that missing invoices return HTTP 200 with an empty items array.",
+          "Check that existing invoices retain their response contract.",
+          "Check consumer error rates."
+        ],
+        "compatibility": [
+          "The HTTP status and missing-invoice response body change.",
+          "The InvoiceStore read contract remains compatible."
+        ]
+      },
+      "evidence": [
+        {
+          "label": "inferred",
+          "detail": "Illustrative: response tests cover both API outcomes; deployed consumer versions are unknown."
+        }
+      ]
+    }
+  ],
+  "unknowns": [
+    {
+      "category": "business",
+      "detail": "It is unknown whether all invoice search workflows should use the same outcome."
+    },
+    {
+      "category": "technical",
+      "detail": "The repository does not identify every consumer of the lookup API."
+    },
+    {
+      "category": "technical",
+      "detail": "This example uses fictional changes, source paths, and Git references."
+    }
+  ]
+}
