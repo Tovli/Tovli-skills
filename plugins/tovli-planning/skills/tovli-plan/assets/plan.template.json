@@ -1,0 +1,69 @@
+{
+  "schema_version": "1.0",
+  "metadata": {
+    "id": "PLAN-NEW",
+    "title": "Untitled work plan",
+    "version": "v1",
+    "stage": "Discovering",
+    "domain": "",
+    "owner": "",
+    "participants": [],
+    "immediate_ask": {
+      "status": "unknown",
+      "description": "",
+      "owner": "",
+      "due_date": null,
+      "linked_ids": []
+    }
+  },
+  "overview": {
+    "objective": "",
+    "user_need": "",
+    "today": "",
+    "plain_language_solution": "",
+    "why_now": ""
+  },
+  "plan_now": {
+    "current_agreed_plan": "",
+    "visual_examples": [],
+    "user_journey": [],
+    "edge_cases": [],
+    "success_measures": [],
+    "assumptions": [],
+    "supporting_links": []
+  },
+  "decide": {
+    "questions": [],
+    "defaults": [],
+    "direct_decisions": [],
+    "out_this_round": []
+  },
+  "steps": {
+    "phases": [],
+    "how_we_test_it": {
+      "environment": "",
+      "scenarios": [],
+      "acceptance_criteria": []
+    },
+    "where_it_ships": {
+      "target": "",
+      "release_order": "",
+      "release_trigger": "",
+      "rollout_strategy": "",
+      "rollback": ""
+    },
+    "how_it_is_built": {
+      "approach": "",
+      "quality_gates": [],
+      "handoffs": []
+    },
+    "technical_implications": [],
+    "risks": [],
+    "records": []
+  },
+  "history": {
+    "events": [],
+    "versions": []
+  },
+  "diagrams": []
+}

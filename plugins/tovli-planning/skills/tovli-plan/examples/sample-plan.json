@@ -1,0 +1,83 @@
+{
+  "schema_version": "1.0",
+  "metadata": {
+    "id": "EXAMPLE-WORKSHOP",
+    "title": "Improve our team onboarding workshop",
+    "version": "v2",
+    "as_of": "2026-11-23",
+    "stage": "Planning",
+    "domain": "Team operations (fictional example)",
+    "owner": "Workshop coordinator",
+    "participants": ["Team lead", "New joiner representative"],
+    "immediate_ask": {"status":"open","description":"Choose whether the workshop will be remote or in person.","owner":"Team lead","due_date":null,"linked_ids":["D-001"]}
+  },
+  "overview": {
+    "objective": "Run a useful 90-minute session that makes first-week onboarding less confusing.",
+    "user_need": "New team members cannot always tell which systems and people to contact during their first week.",
+    "today": "Onboarding material is scattered across several documents.",
+    "plain_language_solution": "Test a short workshop, give everyone one clear checklist, and collect actionable feedback.",
+    "why_now": "The next intake of team members is approaching."
+  },
+  "plan_now": {
+    "as_of": "2026-11-23",
+    "current_agreed_plan": "Prepare the agenda and checklist first. A remote vs. in-person format is not yet decided. Pilot the workshop, collect feedback, then revise the checklist.",
+    "visual_examples": [
+      {"id":"V-001","title":"Agenda sketch","kind":"sample_output","url":"","description":"90 minutes: orientation, hands-on walkthrough, Q&A, retrospective.","decision_annotations":[{"pin":"1","decision_id":"D-001"}]}
+    ],
+    "user_journey": [
+      {"sequence":1,"actor":"Coordinator","action":"Send a session invitation and a one-page outline","response":"Participants know what to prepare","outcome":"The workshop starts with shared expectations","linked_decision_ids":["D-001"]},
+      {"sequence":2,"actor":"New joiner","action":"Follow the onboarding walkthrough","response":"The coordinator answers real first-week questions","outcome":"Participant can perform core first-week tasks","linked_decision_ids":[]},
+      {"sequence":3,"actor":"Coordinator","action":"Collect feedback and revise the checklist","response":"Changes are recorded","outcome":"A reusable checklist is published","linked_decision_ids":["D-002"]}
+    ],
+    "edge_cases": [{"scenario":"A participant cannot attend live","expected_behavior":"Share the checklist and offer a short asynchronous question period."}],
+    "success_measures": [{"id":"M-001","metric":"Participants can complete at least three first-week tasks","target":"80% of pilot participants","measured_by":"End-of-session checklist"}],
+    "assumptions": [{"id":"A-001","statement":"The first-week tasks are representative of common onboarding problems","status":"unverified","evidence":"Needs validation with new joiners"}],
+    "supporting_links": []
+  },
+  "decide": {
+    "questions": [
+      {
+        "id":"D-001","question":"Should we hold the pilot remotely or in person?","today":"Participants work across locations.","why_it_matters":"The format affects attendance, facilitation, and equipment.","my_pick_option_id":"A","what_we_get":"A format we can organize and communicate clearly.","if_we_skip_it":"Invitations and room arrangements remain blocked.",
+        "options":[{"id":"A","description":"Remote with live screen sharing","tradeoff":"Less informal interaction"},{"id":"B","description":"In-person in a meeting room","tradeoff":"Travel required"}],
+        "selected_option_id":null,"status":"open","blocking":true,"decision_owner":"Team lead","due_date":null,"note":"","decided_by":"","decided_at":null,"related_step_ids":["S-002"],"related_visual_ids":["V-001"]
+      },
+      {
+        "id":"D-002","question":"How should we collect workshop feedback?","today":"Feedback arrives in casual messages.","why_it_matters":"We need repeatable information for improvement.","my_pick_option_id":"A","what_we_get":"Prioritized changes after each pilot.","if_we_skip_it":"Improvement remains anecdotal.",
+        "options":[{"id":"A","description":"A short online survey","tradeoff":"Responses may be superficial"},{"id":"B","description":"A 10-minute facilitated retrospective","tradeoff":"Uses more session time"}],
+        "selected_option_id":"B","status":"settled","blocking":false,"decision_owner":"Team lead","note":"Conversation quality matters more than survey volume in the pilot.","decided_by":"Team lead","decided_at":"2026-11-22T15:00:00Z","related_step_ids":["S-004"],"related_visual_ids":[]
+      }
+    ],
+    "defaults": [
+      {"id":"D-101","question":"How long should the pilot take?","options":[{"id":"A","description":"90 minutes"},{"id":"B","description":"Two hours"}],"default_option_id":"A","selected_option_id":null,"status":"proposed","accepted_by":"","accepted_at":null}
+    ],
+    "direct_decisions": [{"id":"D-201","statement":"Do not record identifiable participant discussions","rationale":"Encourage candid feedback in the pilot","decided_by":"Team lead","decided_at":"2026-11-22T15:00:00Z","related_step_ids":[]}],
+    "out_this_round": [{"id":"O-001","description":"Full redesign of the company onboarding program","reason":"The pilot only tests the first-week workshop","revisit_when":"After the pilot is evaluated"}]
+  },
+  "steps": {
+    "phases": [
+      {"id":"S-001","sequence":1,"title":"Draft agenda and checklist","outcome":"A reviewable first version","owner":"Workshop coordinator","commitment_status":"committed","depends_on":[],"decision_ids":[],"target_date":null,"status":"in_progress","done_when":"Agenda and checklist reviewed by a new joiner","evidence_links":[]},
+      {"id":"S-002","sequence":2,"title":"Confirm format and invite participants","outcome":"Invitation and format confirmed","owner":"Team lead","commitment_status":"proposed","depends_on":["S-001"],"decision_ids":["D-001"],"target_date":null,"status":"not_started","done_when":"Participants confirm attendance","evidence_links":[]},
+      {"id":"S-003","sequence":3,"title":"Run the pilot","outcome":"Workshop completed","owner":"Workshop coordinator","commitment_status":"proposed","depends_on":["S-002"],"decision_ids":[],"target_date":null,"status":"not_started","done_when":"Walkthrough completed and attendance noted","evidence_links":[]},
+      {"id":"S-004","sequence":4,"title":"Run retrospective and revise checklist","outcome":"An improved reusable checklist","owner":"Workshop coordinator","commitment_status":"proposed","depends_on":["S-003"],"decision_ids":["D-002"],"target_date":null,"status":"not_started","done_when":"Top three issues reviewed and a new checklist version published","evidence_links":[]}
+    ],
+    "how_we_test_it": {"environment":"Pilot with new team members","scenarios":["Complete the standard first-week tasks","Handle a question without a known owner"],"acceptance_criteria":["Participants can identify where to ask for help","Feedback yields at least one concrete improvement"]},
+    "where_it_ships": {"target":"Team onboarding library","release_order":"Pilot first, then broader rollout","release_trigger":"Pilot results reviewed","rollout_strategy":"Publish checklist to all new joiners","rollback":"Return to the existing checklist if the pilot introduces confusion"},
+    "how_it_is_built": {"approach":"Coordinator drafts materials, a new joiner reviews, then the group pilots.","quality_gates":["Checklist is understandable without live explanation"],"handoffs":["Coordinator to team lead for sign-off"]},
+    "technical_implications": [],
+    "risks": [{"id":"RISK-001","description":"Pilot participants may be unavailable","likelihood":"medium","impact":"medium","mitigation":"Recruit backup participants","owner":"Workshop coordinator","linked_step_ids":["S-003"]}],
+    "records": []
+  },
+  "history": {
+    "events": [
+      {"id":"H-001","date":"2026-11-21","actor":"New joiner representative","event_type":"feedback","summary":"Asked for a guided first-week walkthrough.","original_quote":"I don't know where to start when I get a new request.","affected_ids":["S-001"]},
+      {"id":"H-002","date":"2026-11-22","actor":"Team lead","event_type":"decision","summary":"Selected a live retrospective rather than a survey.","original_quote":"We need to hear where people are actually getting stuck.","affected_ids":["D-002"],"previous_value":"A (survey) proposed","new_value":"B (retrospective) selected"}
+    ],
+    "versions": [
+      {"version":"v1","date":"2026-11-21","stage":"Discovering","change_summary":"First outline and first-week problem recorded"},
+      {"version":"v2","date":"2026-11-23","stage":"Planning","change_summary":"Feedback approach decided; delivery plan and dependencies added"}
+    ]
+  },
+  "diagrams": [
+    {"id":"G-001","title":"Workshop participant journey","type":"flow","description":"A compact view of the intended operating flow.","nodes":[{"id":"invite","label":"Invitation and agenda"},{"id":"join","label":"Guided walkthrough"},{"id":"retro","label":"Retrospective"},{"id":"publish","label":"Revised checklist"}],"edges":[{"from":"invite","to":"join"},{"from":"join","to":"retro"},{"from":"retro","to":"publish"}],"related_decision_ids":["D-002"]}
+  ]
+}

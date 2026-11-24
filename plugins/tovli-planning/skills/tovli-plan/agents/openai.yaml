@@ -1,0 +1,5 @@
+interface:
+  display_name: "Tovli Plan"
+  short_description: "Plan projects with interactive decisions, steps, and history"
+  default_prompt: "Use $tovli-plan to create or update my project plan with decisions, next steps, history, and an interactive HTML viewer."
+  brand_color: "#0B3B3A"

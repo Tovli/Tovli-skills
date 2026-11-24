@@ -1,0 +1,4 @@
+interface:
+  display_name: "Tovli Agentic Planner"
+  short_description: "Plan reliable agent workflows and implementation"
+  default_prompt: "Use $tovli-agentic-planner to turn my requested agent into a practical workflow and build plan with permissions, execution limits, verification, and evaluation gates."

@@ -1,0 +1,15 @@
+{
+  "name": "tovli-planning",
+  "owner": {
+    "name": "Tovli"
+  },
+  "metadata": {
+    "description": "Create decision-driven project plans and design agentic workflows."
+  },
+  "plugins": [
+    {
+      "name": "tovli-planning",
+      "source": "./plugins/tovli-planning"
+    }
+  ]
+}

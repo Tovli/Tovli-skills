@@ -1,0 +1,10 @@
+{
+  "name": "tovli-planning",
+  "version": "0.1.0",
+  "description": "Create decision-driven project plans and design agentic workflows.",
+  "author": {
+    "name": "Tovli"
+  },
+  "repository": "https://github.com/Tovli/Tovli-skills",
+  "license": "MIT"
+}

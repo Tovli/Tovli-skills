@@ -1,0 +1,20 @@
+{
+  "name": "tovli-planning",
+  "interface": {
+    "displayName": "Tovli Planning"
+  },
+  "plugins": [
+    {
+      "name": "tovli-planning",
+      "source": {
+        "source": "local",
+        "path": "./plugins/tovli-planning"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Productivity"
+    }
+  ]
+}

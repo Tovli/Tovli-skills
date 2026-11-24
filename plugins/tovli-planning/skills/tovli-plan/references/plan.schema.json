@@ -1,0 +1,1079 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.invalid/tovli-plan.schema.json",
+  "title": "Tovli Plan schema v1.0",
+  "description": "Domain-independent, decision-driven planning document; generated HTML is a view of this JSON.",
+  "type": "object",
+  "additionalProperties": true,
+  "required": [
+    "schema_version",
+    "metadata",
+    "overview",
+    "plan_now",
+    "decide",
+    "steps",
+    "history"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "1.0"
+    },
+    "metadata": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "title": {
+          "type": "string"
+        },
+        "version": {
+          "type": "string"
+        },
+        "as_of": {
+          "type": "string",
+          "format": "date"
+        },
+        "stage": {
+          "type": "string",
+          "description": "Discovering | Planning | Awaiting decisions | Building | Validating | Complete | Paused (or domain equivalent)"
+        },
+        "owner": {
+          "type": "string"
+        },
+        "participants": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "latest_change": {
+          "type": "string"
+        },
+        "immediate_ask": {
+          "type": "object",
+          "properties": {
+            "description": {
+              "type": "string"
+            },
+            "owner": {
+              "type": "string"
+            },
+            "due_date": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "format": "date"
+            },
+            "status": {
+              "enum": [
+                "unknown",
+                "none",
+                "open",
+                "in_progress",
+                "done",
+                "blocked"
+              ]
+            },
+            "linked_ids": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          "additionalProperties": true,
+          "required": [
+            "status"
+          ]
+        },
+        "domain": {
+          "type": "string",
+          "description": "Free text domain: software, personal, research, operations, event, business, etc."
+        }
+      },
+      "additionalProperties": true,
+      "required": [
+        "id",
+        "title",
+        "version",
+        "stage"
+      ]
+    },
+    "overview": {
+      "type": "object",
+      "properties": {
+        "objective": {
+          "type": "string"
+        },
+        "user_need": {
+          "type": "string"
+        },
+        "today": {
+          "type": "string"
+        },
+        "plain_language_solution": {
+          "type": "string"
+        },
+        "why_now": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": true,
+      "required": [
+        "objective",
+        "user_need",
+        "plain_language_solution"
+      ]
+    },
+    "plan_now": {
+      "type": "object",
+      "properties": {
+        "as_of": {
+          "type": "string",
+          "format": "date"
+        },
+        "current_agreed_plan": {
+          "type": "string"
+        },
+        "visual_examples": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "title": {
+                "type": "string"
+              },
+              "kind": {
+                "enum": [
+                  "mockup",
+                  "wireframe",
+                  "diagram",
+                  "sample_output",
+                  "conversation",
+                  "other"
+                ]
+              },
+              "url": {
+                "type": "string"
+              },
+              "description": {
+                "type": "string"
+              },
+              "decision_annotations": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "pin": {
+                      "type": "string"
+                    },
+                    "decision_id": {
+                      "type": "string"
+                    }
+                  },
+                  "additionalProperties": true,
+                  "required": [
+                    "pin",
+                    "decision_id"
+                  ]
+                }
+              }
+            },
+            "additionalProperties": true,
+            "required": [
+              "id",
+              "title"
+            ]
+          }
+        },
+        "user_journey": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "sequence": {
+                "type": "integer",
+                "minimum": 1
+              },
+              "actor": {
+                "type": "string"
+              },
+              "action": {
+                "type": "string"
+              },
+              "response": {
+                "type": "string"
+              },
+              "outcome": {
+                "type": "string"
+              },
+              "linked_decision_ids": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            },
+            "additionalProperties": true,
+            "required": [
+              "sequence",
+              "action"
+            ]
+          }
+        },
+        "edge_cases": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "scenario": {
+                "type": "string"
+              },
+              "expected_behavior": {
+                "type": "string"
+              }
+            },
+            "additionalProperties": true,
+            "required": [
+              "scenario",
+              "expected_behavior"
+            ]
+          }
+        },
+        "supporting_links": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "title": {
+                "type": "string"
+              },
+              "url": {
+                "type": "string",
+                "format": "uri"
+              }
+            },
+            "required": [
+              "title",
+              "url"
+            ],
+            "additionalProperties": true
+          }
+        },
+        "success_measures": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "metric": {
+                "type": "string"
+              },
+              "target": {
+                "type": "string"
+              },
+              "measured_by": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "id",
+              "metric"
+            ],
+            "additionalProperties": true
+          }
+        },
+        "assumptions": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "statement": {
+                "type": "string"
+              },
+              "status": {
+                "enum": [
+                  "unverified",
+                  "validated",
+                  "invalidated"
+                ]
+              },
+              "evidence": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "id",
+              "statement",
+              "status"
+            ],
+            "additionalProperties": true
+          }
+        }
+      },
+      "additionalProperties": true,
+      "required": [
+        "current_agreed_plan"
+      ]
+    },
+    "decide": {
+      "type": "object",
+      "properties": {
+        "questions": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "question": {
+                "type": "string"
+              },
+              "today": {
+                "type": "string"
+              },
+              "why_it_matters": {
+                "type": "string"
+              },
+              "my_pick_option_id": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "what_we_get": {
+                "type": "string"
+              },
+              "if_we_skip_it": {
+                "type": "string"
+              },
+              "options": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "description": {
+                      "type": "string"
+                    },
+                    "tag": {
+                      "type": "string"
+                    },
+                    "tradeoff": {
+                      "type": "string"
+                    }
+                  },
+                  "additionalProperties": true,
+                  "required": [
+                    "id",
+                    "description"
+                  ]
+                }
+              },
+              "selected_option_id": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "status": {
+                "enum": [
+                  "open",
+                  "settled",
+                  "deferred",
+                  "superseded"
+                ]
+              },
+              "note": {
+                "type": "string"
+              },
+              "decided_by": {
+                "type": "string"
+              },
+              "decided_at": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "format": "date-time"
+              },
+              "provenance": {
+                "type": "string"
+              },
+              "related_step_ids": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "related_visual_ids": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "blocking": {
+                "type": "boolean"
+              },
+              "due_date": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "format": "date"
+              },
+              "decision_owner": {
+                "type": "string"
+              }
+            },
+            "additionalProperties": true,
+            "required": [
+              "id",
+              "question",
+              "options",
+              "status"
+            ],
+            "description": "Separate advisor recommendation from accepted option; a note may answer an open question without choosing an option."
+          }
+        },
+        "defaults": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "question": {
+                "type": "string"
+              },
+              "options": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "description": {
+                      "type": "string"
+                    }
+                  },
+                  "additionalProperties": true,
+                  "required": [
+                    "id",
+                    "description"
+                  ]
+                }
+              },
+              "default_option_id": {
+                "type": "string"
+              },
+              "selected_option_id": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "status": {
+                "enum": [
+                  "proposed",
+                  "implicitly_accepted",
+                  "explicitly_accepted",
+                  "overridden"
+                ]
+              },
+              "accepted_by": {
+                "type": "string"
+              },
+              "accepted_at": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "format": "date-time"
+              }
+            },
+            "additionalProperties": true,
+            "required": [
+              "id",
+              "question",
+              "options",
+              "default_option_id",
+              "status"
+            ]
+          }
+        },
+        "out_this_round": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "description": {
+                "type": "string"
+              },
+              "reason": {
+                "type": "string"
+              },
+              "revisit_when": {
+                "type": "string"
+              }
+            },
+            "additionalProperties": true,
+            "required": [
+              "id",
+              "description"
+            ]
+          }
+        },
+        "direct_decisions": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "statement": {
+                "type": "string"
+              },
+              "rationale": {
+                "type": "string"
+              },
+              "decided_by": {
+                "type": "string"
+              },
+              "decided_at": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "format": "date-time"
+              },
+              "source": {
+                "type": "string"
+              },
+              "related_step_ids": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            },
+            "required": [
+              "id",
+              "statement"
+            ],
+            "additionalProperties": true
+          }
+        }
+      },
+      "additionalProperties": true,
+      "required": [
+        "questions",
+        "defaults",
+        "out_this_round"
+      ]
+    },
+    "steps": {
+      "type": "object",
+      "properties": {
+        "phases": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "sequence": {
+                "type": "integer",
+                "minimum": 1
+              },
+              "title": {
+                "type": "string"
+              },
+              "outcome": {
+                "type": "string"
+              },
+              "owner": {
+                "type": "string"
+              },
+              "depends_on": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "decision_ids": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "target_date": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "format": "date"
+              },
+              "status": {
+                "enum": [
+                  "not_started",
+                  "in_progress",
+                  "blocked",
+                  "done",
+                  "cancelled"
+                ]
+              },
+              "done_when": {
+                "type": "string"
+              },
+              "evidence_links": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "title": {
+                      "type": "string"
+                    },
+                    "url": {
+                      "type": "string",
+                      "format": "uri"
+                    }
+                  },
+                  "required": [
+                    "title",
+                    "url"
+                  ],
+                  "additionalProperties": true
+                }
+              },
+              "commitment_status": {
+                "enum": [
+                  "proposed",
+                  "committed",
+                  "cancelled"
+                ]
+              }
+            },
+            "additionalProperties": true,
+            "required": [
+              "id",
+              "sequence",
+              "title",
+              "status"
+            ]
+          }
+        },
+        "how_we_test_it": {
+          "type": "object",
+          "properties": {
+            "environment": {
+              "type": "string"
+            },
+            "test_personas": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "platforms": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "scenarios": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "acceptance_criteria": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "evidence_links": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "title": {
+                    "type": "string"
+                  },
+                  "url": {
+                    "type": "string",
+                    "format": "uri"
+                  }
+                },
+                "required": [
+                  "title",
+                  "url"
+                ],
+                "additionalProperties": true
+              }
+            }
+          },
+          "additionalProperties": true
+        },
+        "where_it_ships": {
+          "type": "object",
+          "properties": {
+            "target": {
+              "type": "string"
+            },
+            "release_order": {
+              "type": "string"
+            },
+            "release_trigger": {
+              "type": "string"
+            },
+            "rollout_strategy": {
+              "type": "string"
+            },
+            "rollback": {
+              "type": "string"
+            }
+          },
+          "additionalProperties": true
+        },
+        "how_it_is_built": {
+          "type": "object",
+          "properties": {
+            "approach": {
+              "type": "string"
+            },
+            "quality_gates": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "handoffs": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          "additionalProperties": true
+        },
+        "technical_implications": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "area": {
+                "type": "string"
+              },
+              "today": {
+                "type": "string"
+              },
+              "proposed_change": {
+                "type": "string"
+              },
+              "linked_decision_ids": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            },
+            "additionalProperties": true,
+            "required": [
+              "area",
+              "proposed_change"
+            ]
+          }
+        },
+        "records": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "kind": {
+                "type": "string"
+              },
+              "title": {
+                "type": "string"
+              },
+              "url": {
+                "type": "string"
+              },
+              "state_as_of": {
+                "type": "string"
+              }
+            },
+            "additionalProperties": true,
+            "required": [
+              "id",
+              "kind",
+              "title",
+              "url"
+            ]
+          }
+        },
+        "risks": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "description": {
+                "type": "string"
+              },
+              "likelihood": {
+                "enum": [
+                  "unknown",
+                  "low",
+                  "medium",
+                  "high"
+                ]
+              },
+              "impact": {
+                "enum": [
+                  "unknown",
+                  "low",
+                  "medium",
+                  "high"
+                ]
+              },
+              "mitigation": {
+                "type": "string"
+              },
+              "owner": {
+                "type": "string"
+              },
+              "linked_step_ids": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            },
+            "required": [
+              "id",
+              "description"
+            ],
+            "additionalProperties": true
+          }
+        }
+      },
+      "additionalProperties": true,
+      "required": [
+        "phases"
+      ]
+    },
+    "history": {
+      "type": "object",
+      "properties": {
+        "events": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "date": {
+                "type": "string",
+                "format": "date"
+              },
+              "actor": {
+                "type": "string"
+              },
+              "event_type": {
+                "type": "string"
+              },
+              "summary": {
+                "type": "string"
+              },
+              "original_quote": {
+                "type": "string"
+              },
+              "affected_ids": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "previous_value": {
+                "type": "string"
+              },
+              "new_value": {
+                "type": "string"
+              }
+            },
+            "additionalProperties": true,
+            "required": [
+              "id",
+              "date",
+              "actor",
+              "summary"
+            ]
+          }
+        },
+        "versions": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "version": {
+                "type": "string"
+              },
+              "date": {
+                "type": "string",
+                "format": "date"
+              },
+              "stage": {
+                "type": "string"
+              },
+              "change_summary": {
+                "type": "string"
+              },
+              "related_links": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "title": {
+                      "type": "string"
+                    },
+                    "url": {
+                      "type": "string",
+                      "format": "uri"
+                    }
+                  },
+                  "required": [
+                    "title",
+                    "url"
+                  ],
+                  "additionalProperties": true
+                }
+              }
+            },
+            "additionalProperties": true,
+            "required": [
+              "version",
+              "date",
+              "change_summary"
+            ]
+          }
+        }
+      },
+      "additionalProperties": true,
+      "required": [
+        "events",
+        "versions"
+      ]
+    },
+    "diagrams": {
+      "type": "array",
+      "description": "Optional native SVG diagrams displayed in Plan now. Keep simple; use flow, dependency, or architecture.",
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "title",
+          "type",
+          "nodes",
+          "edges"
+        ],
+        "additionalProperties": true,
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "type": {
+            "enum": [
+              "flow",
+              "dependency",
+              "architecture"
+            ]
+          },
+          "description": {
+            "type": "string"
+          },
+          "nodes": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "id",
+                "label"
+              ],
+              "additionalProperties": true,
+              "properties": {
+                "id": {
+                  "type": "string"
+                },
+                "label": {
+                  "type": "string"
+                },
+                "group": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "edges": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "from",
+                "to"
+              ],
+              "additionalProperties": true,
+              "properties": {
+                "from": {
+                  "type": "string"
+                },
+                "to": {
+                  "type": "string"
+                },
+                "label": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "related_decision_ids": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    }
+  }
+}
