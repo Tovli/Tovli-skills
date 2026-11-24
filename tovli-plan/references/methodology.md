@@ -45,6 +45,16 @@ Ask only what meaningfully changes the plan:
 
 If the user offers a vague goal but needs a plan quickly, create a draft with explicit unknowns and proposed next steps. Prefer one sharp question over a large intake form. If a new project is trivial, use only the essentials rather than generating artificial complexity.
 
+### Execution feasibility
+
+Use the checks that could change the plan's sequence, commitments, or next ask.
+
+- **Inputs and handoffs.** For each meaningful step, identify the input needed to start, the observable output, and who or what uses it. Group related steps by deliverable. Split a step further when it exposes a handoff, decision, or blocker.
+- **Dependencies and bottlenecks.** Use `depends_on` for required predecessor steps and `decision_ids` to link choices that affect execution. Surface external prerequisites such as approvals, access, and supplier lead times in the relevant step or handoff. Identify the critical path when credible durations support it. When timing is uncertain, flag the dependencies most likely to delay delivery.
+- **Resources and parallel work.** Identify the people, expertise, tools, and capacity needed. Include agent roles or compute needs when delegation or compute affects feasibility. Propose parallel work only where prerequisites and shared capacity allow it.
+- **Time estimates.** When timing affects a decision and there is a credible basis, give a provisional range with assumptions about effort, availability, and wait times. Use `target_date` for evidenced dates and mark uncertain timing as open.
+- **Risks and checkpoints.** For each material risk, link the affected steps and record the mitigation, the trigger for a fallback, and the fallback action. At checkpoints that gate dependent work, specify the evidence needed to proceed.
+
 ### Maintenance session
 
 1. Read the existing plan and relevant new facts.
