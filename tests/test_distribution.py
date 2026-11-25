@@ -119,10 +119,14 @@ class DistributionTests(unittest.TestCase):
         local = skills / "tovli-post-writer" / "SKILL.md"
         local.write_bytes(b"User edit\n")
         output = self.install("--all", expected=1)
+        self.assertIn("[ERROR]", output)
         self.assertIn("local changes", output)
+        self.assertIn("No selected skills were changed by this operation", output)
+        self.assertIn("Some may already be installed", output)
         self.assertFalse((skills / "tovli-plan").exists())
-        self.cli("uninstall", "--client", "codex", "--scope", "project",
-                 "--project-dir", self.project, "tovli-post-writer", expected=1)
+        output = self.cli("uninstall", "--client", "codex", "--scope", "project",
+                          "--project-dir", self.project, "tovli-post-writer", expected=1)
+        self.assertIn("Cannot complete uninstallation", output)
         self.assertEqual(local.read_bytes(), b"User edit\n")
 
     def test_recovers_an_interrupted_replacement(self):

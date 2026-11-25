@@ -178,7 +178,12 @@ def apply_to_scope(args, names, snapshot):
                     continue
                 receipt = read_receipt(target)
                 if receipt is None or receipt.get("digest") != current:
-                    raise DistributionError(f"Existing skill contains unmanaged files or local changes: {target}")
+                    operation = "installation" if snapshot else "uninstallation"
+                    raise DistributionError(
+                        f"Cannot complete {operation}: existing skill contains unmanaged files or local changes: {target}\n"
+                        "No selected skills were changed by this operation. Some may already be installed.\n"
+                        "Review the existing skill and its changes before retrying, or select other skills."
+                    )
                 changes.append((name, "updated" if snapshot else "removed", current, desired))
             elif snapshot:
                 changes.append((name, "installed", None, desired))
@@ -311,7 +316,7 @@ def main():
             print(f"{name}: {actions[name]}{invocation if snapshot else ''}")
         return 0
     except (DistributionError, OSError, ValueError) as error:
-        print(f"Tovli Skills: {error}", file=sys.stderr)
+        print(f"[ERROR] Tovli Skills: {error}", file=sys.stderr)
         return 1
 
 
