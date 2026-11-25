@@ -20,8 +20,8 @@ The source artifact used clickable choices, notes, a Copy answers button, and da
 - Clicking a choice (for a major question or low-stakes default) records a **draft answer** in browser memory; entering text in **Custom answer** automatically selects a custom response and deselects the predefined options. An additional note can be entered with or without a selection.
 - The default or recommended choice is not automatically selected merely because it is recommended. The viewer separately marks a recorded canonical selection, a recommendation, and a locally edited draft.
 - **Copy answers** copies only edited responses, including full option descriptions, custom text and optional notes. Provide a visible manual-copy fallback if clipboard APIs fail.
-- **Download answers JSON** creates a separate draft export, not a rewritten `plan.json`. Persist drafts with local browser storage only if available. Do not depend on it for durability. Allow users to clear an individual draft and restore the canonical display.
-- On return to a planning session, reconcile draft answers with current `plan.json`. Explicitly decide what becomes accepted, preserve provenance and superseded choices in History, and render a new version. For a novel answer, add an option to the canonical list with a stable unique ID before selecting it.
+- **Download answers JSON** creates a separate draft export. Persist drafts with local browser storage only if available. Do not depend on it for durability. Allow users to clear an individual draft and restore the canonical display.
+- On return to a planning session, reconcile draft answers with the current canonical JSON. Explicitly decide what becomes accepted, preserve provenance and superseded choices in History, and render a new version. For a novel answer, add an option to the canonical list with a stable unique ID before selecting it.
 
 ### Core semantics
 

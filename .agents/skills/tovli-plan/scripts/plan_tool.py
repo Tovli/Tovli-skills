@@ -4,7 +4,9 @@ from __future__ import annotations
 import argparse
 import json
 import html
+import re
 import sys
+import unicodedata
 from datetime import date
 from pathlib import Path
 
@@ -180,7 +182,18 @@ def validate(plan: dict) -> tuple[list[str], list[str]]:
     return errors,warnings
 
 
-def render(plan: dict, target: Path):
+def write_text(path: Path, content: str, *, overwrite: bool) -> None:
+    output = path.open('w' if overwrite else 'x', encoding='utf-8')
+    try:
+        with output:
+            output.write(content)
+    except (OSError, KeyboardInterrupt):
+        if not overwrite:
+            path.unlink()
+        raise
+
+
+def render(plan: dict, target: Path, *, overwrite: bool = True):
     template=(ASSETS/'plan-viewer.html').read_text(encoding='utf-8')
     if template.count('__PLAN_DATA__')!=1:
         raise ValueError('HTML template must contain exactly one __PLAN_DATA__ placeholder')
@@ -193,7 +206,7 @@ def render(plan: dict, target: Path):
     rendered=rendered.replace('<title>Tovli Plan</title>',
         '<title>'+html.escape(str(title))+' | Planning Canvas</title>',1)
     target.parent.mkdir(parents=True,exist_ok=True)
-    target.write_text(rendered,encoding='utf-8')
+    write_text(target, rendered, overwrite=overwrite)
     return target
 
 
@@ -203,13 +216,77 @@ def report(errors,warnings):
     if not errors: print(f'Validated: 0 errors, {len(warnings)} warning(s).')
 
 
+def next_plan_number(directory: Path) -> int:
+    highest = 0
+    for path in directory.iterdir():
+        if path.suffix.lower() not in {'.json', '.html'} or not path.is_file():
+            continue
+        match = re.fullmatch(r'PLAN-([0-9]+)(?:-.+)?', path.stem, re.IGNORECASE)
+        if match is None and path.suffix.lower() == '.json':
+            # Plans created with the original explicit-path command may only carry an ID in JSON.
+            try:
+                metadata = read_json(path).get('metadata')
+            except ValueError:
+                continue
+            if isinstance(metadata, dict):
+                match = re.fullmatch(r'PLAN-([0-9]+)', str(metadata.get('id')), re.IGNORECASE)
+        if match:
+            highest = max(highest, int(match[1]))
+    return highest + 1
+
+
+def write_plan(data: dict, path: Path, *, force: bool = False) -> int:
+    out = path.with_suffix('.html')
+    if path == out:
+        raise ValueError('Expected a JSON path, received an HTML path')
+    for target in (path, out):
+        if target.exists() and not force:
+            raise ValueError(f'{target} already exists (use --force to replace)')
+    errors, warnings = validate(data)
+    report(errors, warnings)
+    if errors:
+        return 1
+    path.parent.mkdir(parents=True, exist_ok=True)
+    write_text(path, json.dumps(data, ensure_ascii=False, indent=2) + '\n', overwrite=force)
+    try:
+        render(data, out, overwrite=force)
+    except (OSError, ValueError, KeyboardInterrupt):
+        if not force:
+            path.unlink()
+        raise
+    print(f'Created {path} and {out}')
+    return 0
+
+
+def init_numbered_plan(data: dict, directory: Path) -> int:
+    title = unicodedata.normalize('NFKC', data['metadata']['title'])
+    slug = '-'.join(re.findall(r'[^\W_]+', title.lower()))[:80].rstrip('-')
+    if not slug:
+        raise ValueError('The plan title must contain a letter or number')
+
+    directory.mkdir(parents=True, exist_ok=True)
+    lock = directory / '.tovli-plan-init.lock'
+    try:
+        lock.mkdir()
+    except FileExistsError as exc:
+        raise ValueError(f'Numbered plan creation is already locked in {directory}. Retry when it finishes.') from exc
+    try:
+        plan_id = f'PLAN-{next_plan_number(directory):03d}'
+        data['metadata']['id'] = plan_id
+        return write_plan(data, directory / f'{plan_id}-{slug}.json')
+    finally:
+        lock.rmdir()
+
+
 def main(argv=None):
     parser=argparse.ArgumentParser(description=__doc__)
     cmds=parser.add_subparsers(dest='command',required=True)
-    init=cmds.add_parser('init',help='Create a blank plan.json and matching plan.html')
-    init.add_argument('path',type=Path,help='Destination JSON path, e.g. my-project/planning/plan.json')
-    init.add_argument('--title',default='Untitled work plan')
-    init.add_argument('--id',default='PLAN-NEW')
+    init=cmds.add_parser('init',help='Create a plan JSON and matching HTML viewer')
+    destination=init.add_mutually_exclusive_group(required=True)
+    destination.add_argument('path',nargs='?',type=Path,help='Explicit destination JSON path')
+    destination.add_argument('--directory',type=Path,help='Planning directory for automatic numbering')
+    init.add_argument('--title',help='Plan title (required with --directory)')
+    init.add_argument('--id',help='Custom plan ID for an explicit JSON path')
     init.add_argument('--date',default=date.today().isoformat())
     init.add_argument('--force',action='store_true')
     v=cmds.add_parser('validate',help='Validate a plan JSON file')
@@ -217,25 +294,24 @@ def main(argv=None):
     v.add_argument('--strict',action='store_true',help='Warnings also make validation fail')
     r=cmds.add_parser('render',help='Generate the standalone HTML viewer for a plan JSON file')
     r.add_argument('path',type=Path)
-    r.add_argument('--out',type=Path,help='HTML destination (default: next to JSON as plan.html)')
+    r.add_argument('--out',type=Path,help='HTML destination (default: same filename stem as the JSON)')
     r.add_argument('--strict',action='store_true')
     args=parser.parse_args(argv)
     try:
         if args.command=='init':
-            if args.path.exists() and not args.force:
-                raise ValueError(f'{args.path} already exists (use --force to replace)')
+            if args.directory is not None and (not args.title or args.id is not None or args.force):
+                init.error('--directory requires --title and cannot be used with --id or --force')
             data=read_json(ASSETS/'plan.template.json')
-            data['metadata']['id']=args.id
-            data['metadata']['title']=args.title
+            if args.id is not None:
+                data['metadata']['id']=args.id
+            if args.title is not None:
+                data['metadata']['title']=args.title
             data['metadata']['as_of']=args.date
             data['plan_now']['as_of']=args.date
             data['history']['versions']=[{'version':'v1','date':args.date,'stage':'Discovering','change_summary':'Initialized blank planning template'}]
-            args.path.parent.mkdir(parents=True,exist_ok=True)
-            args.path.write_text(json.dumps(data,ensure_ascii=False,indent=2)+'\n',encoding='utf-8')
-            errors,warnings=validate(data);report(errors,warnings)
-            if errors: return 1
-            out=args.path.with_suffix('.html');render(data,out)
-            print(f'Created {args.path} and {out}')
+            if args.directory is not None:
+                return init_numbered_plan(data, args.directory)
+            return write_plan(data, args.path, force=args.force)
         else:
             plan=read_json(args.path)
             errors,warnings=validate(plan);report(errors,warnings)
