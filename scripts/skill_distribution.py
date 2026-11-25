@@ -15,6 +15,7 @@ REPOSITORY = "https://github.com/Tovli/Tovli-skills"
 SOURCES = {
     "tovli-plan": "tovli-plan",
     "tovli-agentic-planner": "tovli-agentic-planner",
+    "tovli-adr": "tovli-adr",
     "tovli-explain": "git-branch-change-explainer",
     "tovli-post-writer": "tovli-post-writer",
 }
@@ -37,9 +38,9 @@ class Marketplace:
 
 MARKETPLACES = (
     Marketplace(
-        "tovli-planning", "Tovli Planning", "Project and agent planning",
-        "Create decision-driven project plans and design agentic workflows.",
-        ("tovli-plan", "tovli-agentic-planner"),
+        "tovli-planning", "Tovli Planning", "Project planning and architecture decisions",
+        "Create project plans, design agentic workflows, and record architecture decisions.",
+        ("tovli-plan", "tovli-agentic-planner", "tovli-adr"),
     ),
     Marketplace(
         "tovli-explainer", "Tovli Explainer", "Git branch explainers",

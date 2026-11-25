@@ -12,6 +12,7 @@ Install skills in Codex CLI or Claude Code through a native marketplace or by as
 | [`tovli-post-writer`](tovli-post-writer/) | Drafts, reviews, and polishes credible LinkedIn posts while preserving the author's voice and factual accuracy. |
 | [`tovli-agentic-planner`](tovli-agentic-planner/) | Turns an agent idea into a workflow and build plan with contracts, permissions, bounded execution, verification, and evaluation gates. |
 | [`tovli-plan`](tovli-plan/) | Creates and maintains project plans with canonical JSON, an interactive HTML viewer, decisions, steps, diagrams, and history. |
+| [`tovli-adr`](tovli-adr/) | Records architecture decisions, links related ADRs, and indexes them through Ruflo or Claude Flow MCP or CLI. |
 
 This catalog grows as new skills are added. Each skill's directory may include its own README with specific usage instructions.
 
@@ -19,7 +20,7 @@ This catalog grows as new skills are added. Each skill's directory may include i
 
 | Marketplace | Skills |
 | --- | --- |
-| `tovli-planning` | `tovli-plan`, `tovli-agentic-planner` |
+| `tovli-planning` | `tovli-plan`, `tovli-agentic-planner`, `tovli-adr` |
 | `tovli-explainer` | `tovli-explain` |
 | `tovli-writer` | `tovli-post-writer` |
 

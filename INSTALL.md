@@ -1,6 +1,6 @@
 # Install Tovli Skills
 
-Codex CLI and Claude Code support both a native marketplace route and a standalone installer. Install through a marketplace to get its group of skills. Use the standalone installer for one skill, a selection, or all four.
+Codex CLI and Claude Code support both a native marketplace route and a standalone installer. Install through a marketplace to get its group of skills. Use the standalone installer for one skill, a selection, or the full collection.
 
 ## Native marketplaces
 
@@ -8,7 +8,7 @@ Each marketplace has one plugin with the same name. The commands below install P
 
 | Marketplace name | Skills | Claude Code plugin commands |
 | --- | --- | --- |
-| `tovli-planning` | `tovli-plan`, `tovli-agentic-planner` | `/tovli-planning:tovli-plan`, `/tovli-planning:tovli-agentic-planner` |
+| `tovli-planning` | `tovli-plan`, `tovli-agentic-planner`, `tovli-adr` | `/tovli-planning:tovli-plan`, `/tovli-planning:tovli-agentic-planner`, `/tovli-planning:tovli-adr` |
 | `tovli-explainer` | `tovli-explain` | `/tovli-explainer:tovli-explain` |
 | `tovli-writer` | `tovli-post-writer` | `/tovli-writer:tovli-post-writer` |
 
@@ -80,6 +80,8 @@ python scripts/tovli_skills.py uninstall --client codex --scope project --projec
 ```
 
 The planning and branch-report skills require Python when you run their renderers. The planning skill can use `jsonschema` for full schema and format validation. See each skill's documentation for workflow requirements.
+
+`tovli-adr` can create Markdown ADRs locally. Indexing and graph registration use a Ruflo or Claude Flow MCP connection or CLI configured for the target project. See the [Ruflo integration guide](tovli-adr/references/ruflo.md).
 
 ## Prepare a marketplace release
 

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Tovli ADR"
+  short_description: "Record architecture decisions and index them in Ruflo"
+  default_prompt: "Use $tovli-adr to record this architecture decision and link it to relevant ADRs."

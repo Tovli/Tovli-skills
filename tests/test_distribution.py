@@ -11,11 +11,12 @@ ROOT = Path(__file__).resolve().parents[1]
 SKILL_SOURCES = {
     "tovli-plan": "tovli-plan",
     "tovli-agentic-planner": "tovli-agentic-planner",
+    "tovli-adr": "tovli-adr",
     "tovli-explain": "git-branch-change-explainer",
     "tovli-post-writer": "tovli-post-writer",
 }
 MARKETS = {
-    "tovli-planning": {"tovli-plan", "tovli-agentic-planner"},
+    "tovli-planning": {"tovli-plan", "tovli-agentic-planner", "tovli-adr"},
     "tovli-explainer": {"tovli-explain"},
     "tovli-writer": {"tovli-post-writer"},
 }
@@ -96,7 +97,7 @@ class DistributionTests(unittest.TestCase):
 
     def test_updates_restore_and_uninstall_preserve_unrelated_skills(self):
         self.install("--all")
-        self.assertEqual(self.install("--all").count("already matches"), 4)
+        self.assertEqual(self.install("--all").count("already matches"), len(SKILL_SOURCES))
         skills = self.project / ".agents" / "skills"
         unrelated = skills / "my-skill"
         unrelated.mkdir()
