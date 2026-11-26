@@ -187,10 +187,10 @@ def build_marketplace(destination, market, snapshot, version):
     })
 
 
-def prepare_git_refs(destination, base, version):
+def prepare_git_refs(destination, markets, base, version):
     bare = destination / "marketplaces.git"
     git("init", "--bare", "--quiet", bare)
-    for market in MARKETPLACES:
+    for market in markets:
         branch = f"refs/heads/{market.branch}"
         parent = []
         if base and git("ls-remote", "--heads", "--", base, branch):

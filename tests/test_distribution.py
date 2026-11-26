@@ -218,6 +218,19 @@ class DistributionTests(unittest.TestCase):
             previous = self.git("--git-dir", bare, "rev-parse", branch)
             self.assertEqual(self.git("--git-dir", third / "marketplaces.git", "rev-parse", branch + "^"), previous)
 
+    def test_selected_marketplace_only_prepares_its_branch(self):
+        baseline = self.workspace / "all marketplaces"
+        self.cli("build-marketplaces", "--output", baseline, "--version", "0.2.0", "--git")
+        base = baseline / "marketplaces.git"
+        self.git("--git-dir", base, "update-ref", "-d", "refs/heads/marketplace/tovli-career")
+
+        output = self.workspace / "career release"
+        self.cli("build-marketplaces", "--marketplace", "tovli-career", "--output", output,
+                 "--version", "0.1.0", "--git", "--base", base)
+        self.assertEqual({path.name for path in output.iterdir()}, {"tovli-career", "marketplaces.git"})
+        self.assertEqual(self.git("--git-dir", output / "marketplaces.git", "for-each-ref",
+                                  "--format=%(refname)", "refs/heads"), "refs/heads/marketplace/tovli-career")
+
 
 if __name__ == "__main__":
     unittest.main()

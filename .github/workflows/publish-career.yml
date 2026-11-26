@@ -1,0 +1,51 @@
+name: Publish Tovli Career marketplace
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: Marketplace version (X.Y.Z)
+        required: true
+        type: string
+      publish:
+        description: Push the marketplace branch after validation
+        default: false
+        type: boolean
+
+permissions:
+  contents: write
+
+concurrency:
+  group: publish-marketplace-tovli-career
+
+jobs:
+  release:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
+        with:
+          python-version: '3.10'
+      - name: Run distribution tests
+        run: python -B -m unittest discover -s tests -v
+      - name: Build the marketplace branch
+        env:
+          VERSION: ${{ inputs.version }}
+        run: |
+          python -B scripts/tovli_skills.py build-marketplaces \
+            --marketplace tovli-career --ref HEAD --version "$VERSION" \
+            --output .tovli-build/career-release --git \
+            --base "$GITHUB_SERVER_URL/$GITHUB_REPOSITORY.git"
+      - name: Push marketplace/tovli-career
+        if: inputs.publish
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh auth setup-git
+          git --git-dir=.tovli-build/career-release/marketplaces.git push \
+            "$GITHUB_SERVER_URL/$GITHUB_REPOSITORY.git" \
+            refs/heads/marketplace/tovli-career
