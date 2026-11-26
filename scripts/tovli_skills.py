@@ -257,8 +257,11 @@ def build(args):
     output = args.output.resolve()
     if kind(args.output) is not None or kind(output) is not None:
         raise DistributionError(f"Build output already exists: {output}")
-    if not re.fullmatch(r"(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)", args.version):
-        raise DistributionError("Use a release version in X.Y.Z form.")
+    if args.version == "auto":
+        if not args.git or not args.base:
+            raise DistributionError("Automatic versioning requires --git and --base.")
+    elif not re.fullmatch(r"(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)", args.version):
+        raise DistributionError("Use a release version in X.Y.Z form or use auto.")
     markets = tuple(market for market in MARKETPLACES if args.marketplace in (None, market.name))
     names = tuple(name for market in markets for name in market.skills) if args.marketplace else tuple(SOURCES)
     snapshot = read_snapshot(args.ref, names)
@@ -266,14 +269,16 @@ def build(args):
     with TemporaryDirectory(prefix=".tovli-build-", dir=output.parent) as temp:
         stage = Path(temp) / "marketplaces"
         stage.mkdir()
-        for market in markets:
-            build_marketplace(stage / market.name, market, snapshot, args.version)
         if args.git:
-            prepare_git_refs(stage, markets, args.base, args.version)
+            built = prepare_git_refs(stage, markets, args.base, args.version, snapshot)
+        else:
+            for market in markets:
+                build_marketplace(stage / market.name, market, snapshot, args.version)
+            built = len(markets)
         if kind(output) is not None:
             raise DistributionError(f"Build output already exists: {output}")
         stage.rename(output)
-    print(f"Built {len(markets)} marketplace(s) from {snapshot.revision} in {output}")
+    print(f"Built {built} marketplace(s) from {snapshot.revision} in {output}")
 
 
 def main():
@@ -290,7 +295,8 @@ def main():
             sub.add_argument("--ref", default="HEAD", help="Git commit, tag or branch in this checkout")
     sub = commands.add_parser("build-marketplaces", help="Generate self-contained native catalogs and packages")
     sub.add_argument("--output", type=Path, required=True)
-    sub.add_argument("--version", required=True)
+    sub.add_argument("--version", required=True,
+                     help="X.Y.Z, or auto to bump changed skill marketplaces against --base")
     sub.add_argument("--marketplace", choices=[market.name for market in MARKETPLACES],
                      help="Build one marketplace (default: build all marketplaces)")
     sub.add_argument("--ref", default="HEAD", help="Git commit, tag or branch in this checkout")

@@ -86,7 +86,9 @@ The planning and branch-report skills require Python when you run their renderer
 
 ## Prepare a marketplace release
 
-GitHub Actions validates the committed collection on pull requests and pushes to `main`. To release Tovli Career, open [Publish Tovli Career marketplace](https://github.com/Tovli/Tovli-skills/actions/workflows/publish-career.yml), choose `main`, and enter the marketplace version. Leave **Push the marketplace branch after validation** unchecked to test the build. Enable it to publish to `marketplace/tovli-career`. The first release can use `0.1.0`. For later releases, increase the version when the generated contents change.
+GitHub Actions validates the committed collection on pull requests and pushes to `main`. After a push to `main`, [Publish changed marketplaces](https://github.com/Tovli/Tovli-skills/actions/workflows/publish-marketplaces.yml) compares the packaged files in each skill folder with the files on its marketplace branch. A change publishes the affected plugin with a patch version bump. A new marketplace starts at `0.1.0`. You can rerun the workflow from Actions to retry a release.
+
+For an explicit Tovli Career version or a dry run, open [Publish Tovli Career marketplace](https://github.com/Tovli/Tovli-skills/actions/workflows/publish-career.yml), choose `main`, and enter the marketplace version. Enable **Push the marketplace branch after validation** to publish.
 
 Build all catalog branches from one committed source. Run the tests and use a fresh output directory for each build. When updating published catalogs, `--base` fetches their existing parent commits so the new branches can fast-forward. Choose a version above the previous release when the generated contents change.
 

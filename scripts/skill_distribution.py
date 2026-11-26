@@ -87,7 +87,7 @@ def git(*args, cwd=ROOT, env=None):
 def read_snapshot(ref, names):
     revision = git("rev-parse", "--verify", "--end-of-options", f"{ref}^{{commit}}").decode().strip()
     directories = {SOURCES[name]: name for name in names}
-    archive = git("archive", "--format=tar", revision, "--", "LICENSE", *directories)
+    archive = git("-c", "core.autocrlf=false", "archive", "--format=tar", revision, "--", "LICENSE", *directories)
     skills = {name: {} for name in names}
     license_data = None
     with tarfile.open(fileobj=BytesIO(archive), mode="r:") as contents:
@@ -187,18 +187,61 @@ def build_marketplace(destination, market, snapshot, version):
     })
 
 
-def prepare_git_refs(destination, markets, base, version):
+def comparable_skill_content(data):
+    # Older Windows builds stored CRLF in text files. Preserve binary bytes.
+    if b"\r\n" not in data or b"\0" in data:
+        return data
+    try:
+        data.decode("utf-8")
+    except UnicodeDecodeError:
+        return data
+    return data.replace(b"\r\n", b"\n")
+
+
+def automatic_version(bare, market, snapshot, previous_version):
+    skills_path = PurePosixPath("plugins", market.name, "skills")
+    archive = git("--git-dir", bare, "-c", "core.autocrlf=false",
+                  "archive", "--format=tar", "FETCH_HEAD", "--", skills_path)
+    with tarfile.open(fileobj=BytesIO(archive), mode="r:") as contents:
+        published = {
+            PurePosixPath(member.name).relative_to(skills_path): comparable_skill_content(
+                contents.extractfile(member).read()
+            )
+            for member in contents if member.isfile()
+        }
+    current = {
+        PurePosixPath(name) / path: comparable_skill_content(data)
+        for name in market.skills
+        for path, data in snapshot.skills[name].items()
+    }
+    if current == published:
+        return None
+    major, minor, patch = map(int, previous_version.split("."))
+    return f"{major}.{minor}.{patch + 1}"
+
+
+def prepare_git_refs(destination, markets, base, version, snapshot):
     bare = destination / "marketplaces.git"
     git("init", "--bare", "--quiet", bare)
+    built = 0
     for market in markets:
         branch = f"refs/heads/{market.branch}"
         parent = []
+        previous_version = None
         if base and git("ls-remote", "--heads", "--", base, branch):
             git("--git-dir", bare, "fetch", "--no-tags", "--", base, branch)
             parent = ["-p", "FETCH_HEAD"]
+            previous_version = json.loads(git("--git-dir", bare, "show", "FETCH_HEAD:SOURCE.json"))["version"]
+        market_version = version
+        if version == "auto":
+            market_version = automatic_version(bare, market, snapshot, previous_version) if parent else "0.1.0"
+            if market_version is None:
+                print(f"{market.name}: packaged skills are up to date")
+                continue
         index = bare / "build-index"
         env = os.environ | {"GIT_INDEX_FILE": str(index)}
         workspace = destination / market.name
+        build_marketplace(workspace, market, snapshot, market_version)
         git("--git-dir", bare, "--work-tree", workspace, "-c", "core.autocrlf=false",
             "add", "--force", "--all", "--", ".", cwd=workspace, env=env)
         tree = git("--git-dir", bare, "write-tree", env=env).decode().strip()
@@ -207,11 +250,13 @@ def prepare_git_refs(destination, markets, base, version):
         if tree == parent_tree:
             commit = git("--git-dir", bare, "rev-parse", "FETCH_HEAD").decode().strip()
         else:
-            if parent:
-                old = json.loads(git("--git-dir", bare, "show", "FETCH_HEAD:SOURCE.json"))
-                if tuple(map(int, version.split("."))) <= tuple(map(int, old["version"].split("."))):
-                    raise DistributionError(f"Increase the release version above {old['version']} for {market.name}.")
+            if parent and tuple(map(int, market_version.split("."))) <= tuple(map(int, previous_version.split("."))):
+                raise DistributionError(f"Increase the release version above {previous_version} for {market.name}.")
             commit = git("--git-dir", bare, "-c", "user.name=Tovli Skills",
                          "-c", "user.email=release@tovli.invalid", "-c", "commit.gpgsign=false", "commit-tree",
-                         tree, *parent, "-m", f"{market.name} {version}").decode().strip()
+                         tree, *parent, "-m", f"{market.name} {market_version}").decode().strip()
         git("--git-dir", bare, "update-ref", branch, commit)
+        built += 1
+        if version == "auto":
+            print(f"{market.name}: prepared {market_version}")
+    return built

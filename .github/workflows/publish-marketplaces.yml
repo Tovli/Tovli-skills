@@ -1,0 +1,47 @@
+name: Publish changed marketplaces
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: publish-marketplaces
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          # Queued runs reconcile the latest main against the published catalogs.
+          ref: main
+          persist-credentials: false
+      - uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
+        with:
+          python-version: '3.10'
+      - name: Run distribution tests
+        run: python -B -m unittest discover -s tests -v
+      - name: Build changed marketplaces
+        run: |
+          python -B scripts/tovli_skills.py build-marketplaces \
+            --ref HEAD --version auto --output .tovli-build/auto-release \
+            --git --base "$GITHUB_SERVER_URL/$GITHUB_REPOSITORY.git"
+      - name: Publish changed marketplace branches
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          bare=.tovli-build/auto-release/marketplaces.git
+          prepared_ref=$(git --git-dir="$bare" for-each-ref --count=1 refs/heads)
+          if [[ -z "$prepared_ref" ]]; then
+            echo "All marketplaces are up to date."
+            exit 0
+          fi
+          gh auth setup-git
+          git --git-dir="$bare" push --atomic --all "$GITHUB_SERVER_URL/$GITHUB_REPOSITORY.git"

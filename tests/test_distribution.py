@@ -231,6 +231,38 @@ class DistributionTests(unittest.TestCase):
         self.assertEqual(self.git("--git-dir", output / "marketplaces.git", "for-each-ref",
                                   "--format=%(refname)", "refs/heads"), "refs/heads/marketplace/tovli-career")
 
+    def test_automatic_release_publishes_changed_and_new_skill_packages(self):
+        explainer = self.checkout / "git-branch-change-explainer/SKILL.md"
+        explainer_content = explainer.read_bytes()
+        explainer.write_bytes(explainer_content.replace(b"\n", b"\r\n"))
+        self.commit("Store Windows line endings for the explainer")
+        baseline = self.workspace / "published"
+        self.cli("build-marketplaces", "--output", baseline, "--version", "0.2.0", "--git")
+        base = baseline / "marketplaces.git"
+        career = "refs/heads/marketplace/tovli-career"
+        writer = "refs/heads/marketplace/tovli-writer"
+        self.git("--git-dir", base, "update-ref", "-d", career)
+        previous_writer = self.git("--git-dir", base, "rev-parse", writer)
+
+        explainer.write_bytes(explainer_content)
+        (self.checkout / "tovli-post-writer/assets/example.txt").write_bytes(b"Updated content\n")
+        self.commit("Update the writer skill")
+        release = self.workspace / "release"
+        self.cli("build-marketplaces", "--output", release, "--version", "auto", "--git", "--base", base)
+        pending = release / "marketplaces.git"
+        refs = self.git("--git-dir", pending, "for-each-ref", "--format=%(refname)", "refs/heads")
+        self.assertEqual(set(refs.splitlines()), {career, writer})
+        self.assertEqual(self.git("--git-dir", pending, "rev-parse", writer + "^"), previous_writer)
+        self.assertEqual(self.load_json(release / "tovli-writer/SOURCE.json")["version"], "0.2.1")
+        self.assertEqual(self.load_json(release / "tovli-career/SOURCE.json")["version"], "0.1.0")
+        self.git("--git-dir", pending, "push", "--atomic", "--all", base)
+
+        (self.checkout / "README.md").write_text("Unrelated edit\n", encoding="utf-8")
+        self.commit("Change the repository README")
+        retry = self.workspace / "retry"
+        self.cli("build-marketplaces", "--output", retry, "--version", "auto", "--git", "--base", base)
+        self.assertEqual(self.git("--git-dir", retry / "marketplaces.git", "for-each-ref", "refs/heads"), "")
+
 
 if __name__ == "__main__":
     unittest.main()
