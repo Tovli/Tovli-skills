@@ -1,7 +1,7 @@
 {
   "name": "tovli-planning",
-  "version": "0.1.0",
-  "description": "Create decision-driven project plans and design agentic workflows.",
+  "version": "0.1.1",
+  "description": "Create project plans, design agentic workflows, and record architecture decisions.",
   "author": {
     "name": "Tovli"
   },
@@ -10,8 +10,8 @@
   "skills": "./skills/",
   "interface": {
     "displayName": "Tovli Planning",
-    "shortDescription": "Project and agent planning",
-    "longDescription": "Create decision-driven project plans and design agentic workflows.",
+    "shortDescription": "Project planning and architecture decisions",
+    "longDescription": "Create project plans, design agentic workflows, and record architecture decisions.",
     "developerName": "Tovli",
     "category": "Productivity"
   }

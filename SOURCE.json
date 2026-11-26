@@ -1,10 +1,11 @@
 {
   "repository": "https://github.com/Tovli/Tovli-skills",
-  "revision": "d3bf3d7b502fbd2478630d5801d384fae400a84a",
-  "version": "0.1.0",
+  "revision": "58e19ac50c7a8c933251681bcc47241b000a60f4",
+  "version": "0.1.1",
   "marketplace": "tovli-planning",
   "skills": [
     "tovli-plan",
-    "tovli-agentic-planner"
+    "tovli-agentic-planner",
+    "tovli-adr"
   ]
 }

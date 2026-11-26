@@ -4,7 +4,7 @@
     "name": "Tovli"
   },
   "metadata": {
-    "description": "Create decision-driven project plans and design agentic workflows."
+    "description": "Create project plans, design agentic workflows, and record architecture decisions."
   },
   "plugins": [
     {
