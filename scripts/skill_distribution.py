@@ -18,6 +18,8 @@ SOURCES = {
     "tovli-adr": "tovli-adr",
     "tovli-explain": "git-branch-change-explainer",
     "tovli-post-writer": "tovli-post-writer",
+    "tovli-interview-prep": "tovli-interview-prep",
+    "tovli-cv-optimize": "tovli-cv-optimize",
 }
 SKILL_DIRECTORIES = {"agents", "assets", "examples", "references", "scripts", "tests"}
 SKILL_FILES = {"SKILL.md", "README.md"}
@@ -51,6 +53,11 @@ MARKETPLACES = (
         "tovli-writer", "Tovli Writer", "LinkedIn post writing",
         "Draft, review, and polish LinkedIn posts while preserving the author's voice.",
         ("tovli-post-writer",),
+    ),
+    Marketplace(
+        "tovli-career", "Tovli Career", "CV and interview preparation",
+        "Tailor CVs to jobs and prepare for interviews with personalized coaching.",
+        ("tovli-interview-prep", "tovli-cv-optimize"),
     ),
 )
 

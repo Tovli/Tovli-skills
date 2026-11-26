@@ -1,0 +1,4 @@
+interface:
+  display_name: "Tovli CV Optimize"
+  short_description: "Tailor your CV to a specific job"
+  default_prompt: "Use $tovli-cv-optimize to tailor my CV to a job."

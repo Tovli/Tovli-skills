@@ -8,17 +8,23 @@ import unittest
 
 
 ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(ROOT / "scripts"))
+from skill_distribution import SOURCES, MARKETPLACES
+
 SKILL_SOURCES = {
     "tovli-plan": "tovli-plan",
     "tovli-agentic-planner": "tovli-agentic-planner",
     "tovli-adr": "tovli-adr",
     "tovli-explain": "git-branch-change-explainer",
     "tovli-post-writer": "tovli-post-writer",
+    "tovli-interview-prep": "tovli-interview-prep",
+    "tovli-cv-optimize": "tovli-cv-optimize",
 }
 MARKETS = {
     "tovli-planning": {"tovli-plan", "tovli-agentic-planner", "tovli-adr"},
     "tovli-explainer": {"tovli-explain"},
     "tovli-writer": {"tovli-post-writer"},
+    "tovli-career": {"tovli-interview-prep", "tovli-cv-optimize"},
 }
 
 
@@ -73,6 +79,31 @@ class DistributionTests(unittest.TestCase):
 
     def load_json(self, path):
         return json.loads(path.read_text(encoding="utf-8"))
+
+    def test_real_catalog_is_tracked_and_distributable(self):
+        self.assertEqual(SKILL_SOURCES, SOURCES)
+        self.assertEqual(MARKETS, {market.name: set(market.skills) for market in MARKETPLACES})
+        for source in SKILL_SOURCES.values():
+            skill = ROOT / source / "SKILL.md"
+            self.assertTrue(skill.is_file(), f"Missing {skill}")
+            for path in (ROOT / source).rglob("*"):
+                if path.is_file():
+                    ignored = subprocess.run(
+                        ["git", "check-ignore", "-q", str(path.relative_to(ROOT))],
+                        cwd=ROOT,
+                    )
+                    if ignored.returncode == 0:
+                        continue
+                    tracked = subprocess.run(
+                        ["git", "ls-files", "--error-unmatch", str(path.relative_to(ROOT))],
+                        cwd=ROOT, capture_output=True, text=True,
+                    )
+                    self.assertEqual(tracked.returncode, 0, f"Add {path} to Git")
+            shutil.rmtree(self.checkout / source)
+            shutil.copytree(ROOT / source, self.checkout / source, ignore=shutil.ignore_patterns("__pycache__"))
+        self.commit("Real skill catalog")
+        self.install("--all")
+        self.cli("build-marketplaces", "--output", self.workspace / "real catalog", "--version", "0.1.0")
 
     def test_missing_scope_does_not_write(self):
         output = self.cli("install", "--client", "codex", "--all", expected=2)

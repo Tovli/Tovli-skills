@@ -4,13 +4,14 @@ Codex CLI and Claude Code support both a native marketplace route and a standalo
 
 ## Native marketplaces
 
-Each marketplace has one plugin with the same name. The commands below install Planning. Substitute `tovli-explainer` or `tovli-writer` for every occurrence of `tovli-planning` to choose another group.
+Each marketplace has one plugin with the same name. The commands below install Planning. Substitute `tovli-explainer`, `tovli-writer`, or `tovli-career` for every occurrence of `tovli-planning` to choose another group.
 
 | Marketplace name | Skills | Claude Code plugin commands |
 | --- | --- | --- |
 | `tovli-planning` | `tovli-plan`, `tovli-agentic-planner`, `tovli-adr` | `/tovli-planning:tovli-plan`, `/tovli-planning:tovli-agentic-planner`, `/tovli-planning:tovli-adr` |
 | `tovli-explainer` | `tovli-explain` | `/tovli-explainer:tovli-explain` |
 | `tovli-writer` | `tovli-post-writer` | `/tovli-writer:tovli-post-writer` |
+| `tovli-career` | `tovli-interview-prep`, `tovli-cv-optimize` | `/tovli-career:tovli-interview-prep`, `/tovli-career:tovli-cv-optimize` |
 
 ### Codex CLI
 
@@ -71,7 +72,7 @@ python scripts/tovli_skills.py install --client claude --scope user --all
 | Codex CLI | `.agents/skills/` in the chosen project | `~/.agents/skills/` | `$tovli-plan` |
 | Claude Code | `.claude/skills/` in the chosen project | `~/.claude/skills/` | `/tovli-plan` |
 
-Run the same install command with a newer local ref to update an unmodified installer-managed copy, or with an earlier ref to restore it. An identical install succeeds without copying. The installer reports conflicts for divergent files and preserves them. A matching manually installed copy stays under manual ownership.
+Run the same install command with a newer local ref to update an unmodified installer-managed copy, or with an earlier ref to restore named skills. For a full-collection rollback, check out the earlier release and run its own installer with --all so its catalog matches that release. An identical install succeeds without copying. The installer reports conflicts for divergent files and preserves them. A matching manually installed copy stays under manual ownership.
 
 Use `uninstall` with the same client, scope, and skill selection to remove installer-managed copies. It preserves unmanaged copies and stops if a selected installed skill has local edits.
 
@@ -85,19 +86,19 @@ The planning and branch-report skills require Python when you run their renderer
 
 ## Prepare a marketplace release
 
-Build all three catalog branches from one committed source. Run the tests and use a fresh output directory for each build. When updating published catalogs, `--base` fetches their existing parent commits so the new branches can fast-forward. Choose a version above the previous release when the generated contents change.
+Build all catalog branches from one committed source. Run the tests and use a fresh output directory for each build. When updating published catalogs, `--base` fetches their existing parent commits so the new branches can fast-forward. Choose a version above the previous release when the generated contents change.
 
 ```sh
 python -B -m unittest discover -s tests -v
 python scripts/tovli_skills.py build-marketplaces --ref HEAD --version 0.1.0 --output .tovli-build/0.1.0 --git --base https://github.com/Tovli/Tovli-skills.git
 ```
 
-Each output directory contains both catalog formats, a self-contained plugin, and `SOURCE.json` with the source commit and version. The optional `--git` flag also builds `marketplaces.git` with branches at `refs/heads/marketplace/tovli-planning`, `refs/heads/marketplace/tovli-explainer`, and `refs/heads/marketplace/tovli-writer`. The build makes no remote changes.
+Each output directory contains both catalog formats, a self-contained plugin, and `SOURCE.json` with the source commit and version. The optional `--git` flag also builds `marketplaces.git` with a branch for each marketplace. The build makes no remote changes.
 
-In clean client profiles, add each local catalog directory first and verify installation, exact skill membership, and invocation. Then verify all three refs using a Git fixture before publishing. Rebuild from the same commit and compare the three catalog directories to check for generated file drift. To publish the prepared branches together after validation, push them from the generated repository.
+In clean client profiles, add each local catalog directory first and verify installation, exact skill membership, and invocation. Then verify all refs using a Git fixture before publishing. Rebuild from the same commit and compare the catalog directories to check for generated file drift. To publish the prepared branches together after validation, push them from the generated repository.
 
 ```sh
-git --git-dir=.tovli-build/0.1.0/marketplaces.git push --atomic https://github.com/Tovli/Tovli-skills.git marketplace/tovli-planning marketplace/tovli-explainer marketplace/tovli-writer
+git --git-dir=.tovli-build/0.1.0/marketplaces.git push --atomic https://github.com/Tovli/Tovli-skills.git marketplace/tovli-planning marketplace/tovli-explainer marketplace/tovli-writer marketplace/tovli-career
 ```
 
 Publish the source commit or tag to the same repository for the standalone route. Verify fresh installs using the public commands. Keep the last known-good source release for standalone rollback. For a marketplace rollback, rebuild the prior source at a new version so clients pick up the restored package on refresh.
