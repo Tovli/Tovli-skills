@@ -1,0 +1,10 @@
+{
+  "repository": "https://github.com/Tovli/Tovli-skills",
+  "revision": "58e19ac50c7a8c933251681bcc47241b000a60f4",
+  "version": "0.1.0",
+  "marketplace": "tovli-career",
+  "skills": [
+    "tovli-interview-prep",
+    "tovli-cv-optimize"
+  ]
+}

@@ -1,0 +1,20 @@
+{
+  "name": "tovli-career",
+  "interface": {
+    "displayName": "Tovli Career"
+  },
+  "plugins": [
+    {
+      "name": "tovli-career",
+      "source": {
+        "source": "local",
+        "path": "./plugins/tovli-career"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Productivity"
+    }
+  ]
+}

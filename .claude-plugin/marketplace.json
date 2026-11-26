@@ -1,0 +1,15 @@
+{
+  "name": "tovli-career",
+  "owner": {
+    "name": "Tovli"
+  },
+  "metadata": {
+    "description": "Tailor CVs to jobs and prepare for interviews with personalized coaching."
+  },
+  "plugins": [
+    {
+      "name": "tovli-career",
+      "source": "./plugins/tovli-career"
+    }
+  ]
+}

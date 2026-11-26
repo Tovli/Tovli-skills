@@ -1,0 +1,4 @@
+interface:
+  display_name: "Tovli Interview Prep"
+  short_description: "Prepare for interviews with personalized coaching"
+  default_prompt: "Use $tovli-interview-prep to help me prepare for a job interview."

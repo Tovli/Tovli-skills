@@ -1,0 +1,18 @@
+{
+  "name": "tovli-career",
+  "version": "0.1.0",
+  "description": "Tailor CVs to jobs and prepare for interviews with personalized coaching.",
+  "author": {
+    "name": "Tovli"
+  },
+  "repository": "https://github.com/Tovli/Tovli-skills",
+  "license": "MIT",
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "Tovli Career",
+    "shortDescription": "CV and interview preparation",
+    "longDescription": "Tailor CVs to jobs and prepare for interviews with personalized coaching.",
+    "developerName": "Tovli",
+    "category": "Productivity"
+  }
+}
